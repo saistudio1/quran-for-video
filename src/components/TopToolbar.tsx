@@ -41,6 +41,8 @@ interface TopToolbarProps {
   onOpenProjectsModal: () => void;
   onOpenVideoPreviewModal: () => void;
   onOpenAttributionModal: () => void;
+  uiMode: 'pc' | 'mobile';
+  onChangeUiMode: (mode: 'pc' | 'mobile') => void;
 }
 
 export const TopToolbar: React.FC<TopToolbarProps> = ({
@@ -63,6 +65,8 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({
   onOpenProjectsModal,
   onOpenVideoPreviewModal,
   onOpenAttributionModal,
+  uiMode,
+  onChangeUiMode,
 }) => {
   return (
     <header className="h-14 bg-white border-b border-slate-200 px-4 flex items-center justify-between gap-4 select-none shrink-0 z-30 shadow-xs">
@@ -115,8 +119,36 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({
           </button>
         </div>
 
+        {/* UI Mode Switcher (PC Studio vs Smartphone Mobile) */}
+        <div className="flex items-center bg-slate-100 p-0.5 rounded-lg border border-slate-200/80 text-xs ml-1 sm:ml-2">
+          <button
+            onClick={() => onChangeUiMode('pc')}
+            className={`flex items-center gap-1 px-2 py-1 rounded-md transition-all font-semibold ${
+              uiMode === 'pc'
+                ? 'bg-white text-slate-900 shadow-xs text-[#B89555]'
+                : 'text-slate-500 hover:text-slate-800'
+            }`}
+            title="Tampilan Mode PC (Studio 3 Kolom Lengkap)"
+          >
+            <Monitor className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Mode PC</span>
+          </button>
+          <button
+            onClick={() => onChangeUiMode('mobile')}
+            className={`flex items-center gap-1 px-2 py-1 rounded-md transition-all font-semibold ${
+              uiMode === 'mobile'
+                ? 'bg-white text-slate-900 shadow-xs text-[#B89555]'
+                : 'text-slate-500 hover:text-slate-800'
+            }`}
+            title="Tampilan Mode Mobile (Canva Style Smartphone)"
+          >
+            <Smartphone className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Mode Mobile</span>
+          </button>
+        </div>
+
         {/* Mobile Undo/Redo placed right in top bar for quick thumb reach */}
-        <div className="flex lg:hidden items-center bg-slate-100 rounded-lg p-0.5 border border-slate-200/60 ml-1">
+        <div className="flex md:hidden items-center bg-slate-100 rounded-lg p-0.5 border border-slate-200/60 ml-1">
           <button
             onClick={onUndo}
             disabled={!canUndo}

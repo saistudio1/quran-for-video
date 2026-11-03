@@ -73,7 +73,8 @@ export async function verifyImageAlpha(dataUrl: string): Promise<{ isTransparent
 
 /**
  * Render a DOM element to genuine transparent PNG data URL with zero background
- * using SVG foreignObject and Canvas alpha channels.
+ * using an unscaled, isolated 1:1 DOM snapshot.
+ * Eliminates zoom-scale distortion and prevents text collision between preview & export.
  */
 export async function renderNodeToPng(
   node: HTMLElement,
@@ -86,51 +87,88 @@ export async function renderNodeToPng(
 ): Promise<{ dataUrl: string; cornerAlpha: number }> {
   const scale = options.scale || 1;
   const transparent = options.transparent !== false;
+  const width = options.width || 1080;
+  const height = options.height || 1920;
 
   // 1. Ensure all Quranic fonts are loaded
   if (document.fonts) {
     await document.fonts.ready;
   }
 
-  // 2. Small settlement timeout for Arabic ligatures
-  await new Promise((resolve) => setTimeout(resolve, 100));
+  // 2. Settlement pause for font rendering
+  await new Promise((resolve) => setTimeout(resolve, 80));
 
-  // 3. Render clean node with absolute zero background
-  const dataUrl = await toPng(node, {
-    pixelRatio: scale,
-    backgroundColor: transparent ? undefined : '#000000',
-    quality: 1,
-    cacheBust: true,
-    width: options.width,
-    height: options.height,
-    style: {
-      backgroundColor: transparent ? 'transparent' : '#000000',
-      backgroundImage: 'none',
-      boxShadow: 'none',
-      border: 'none',
-      outline: 'none',
-    },
-    filter: (domNode) => {
-      // Exclude editor-only guides and overlays
-      if (domNode instanceof HTMLElement) {
-        if (domNode.classList.contains('safe-guide')) return false;
-      }
-      return true;
-    },
+  // 3. Create an isolated offscreen container attached directly to document.body
+  // This removes any ancestor CSS transform: scale(zoom) from affecting computed styles,
+  // font metrics, line breaks, or text wrapping!
+  const offscreenContainer = document.createElement('div');
+  offscreenContainer.style.position = 'fixed';
+  offscreenContainer.style.left = '-99999px';
+  offscreenContainer.style.top = '0';
+  offscreenContainer.style.width = `${width}px`;
+  offscreenContainer.style.height = `${height}px`;
+  offscreenContainer.style.transform = 'none';
+  offscreenContainer.style.zIndex = '-99999';
+  offscreenContainer.style.opacity = '1';
+  offscreenContainer.style.pointerEvents = 'none';
+  offscreenContainer.style.overflow = 'hidden';
+  offscreenContainer.style.backgroundColor = transparent ? 'transparent' : '#000000';
+
+  const clone = node.cloneNode(true) as HTMLElement;
+  clone.id = 'quran-canvas-export-clone';
+  clone.style.width = `${width}px`;
+  clone.style.height = `${height}px`;
+  clone.style.transform = 'none';
+  clone.style.margin = '0';
+  clone.style.position = 'relative';
+  clone.style.backgroundColor = transparent ? 'transparent' : (node.style.backgroundColor || '#000000');
+
+  // Remove any active editor selection rings or safe guides from the clone
+  clone.querySelectorAll('.safe-guide').forEach((el) => el.remove());
+  clone.querySelectorAll('[class*="ring-"]').forEach((el) => {
+    el.classList.remove('ring-2', 'ring-[#B89555]', 'ring-[#B89555]/50');
   });
 
-  // 4. Verify alpha transparency
-  let cornerAlpha = 0;
-  if (transparent) {
-    const verification = await verifyImageAlpha(dataUrl);
-    cornerAlpha = verification.cornerAlpha;
-  }
+  offscreenContainer.appendChild(clone);
+  document.body.appendChild(offscreenContainer);
 
-  return { dataUrl, cornerAlpha };
+  try {
+    // 4. Render clean node with absolute zero background
+    const dataUrl = await toPng(clone, {
+      pixelRatio: scale,
+      backgroundColor: transparent ? undefined : '#000000',
+      quality: 1,
+      cacheBust: false,
+      width: width,
+      height: height,
+      style: {
+        backgroundColor: transparent ? 'transparent' : '#000000',
+        backgroundImage: 'none',
+        boxShadow: 'none',
+        border: 'none',
+        outline: 'none',
+        transform: 'none',
+      },
+    });
+
+    // 5. Verify alpha transparency
+    let cornerAlpha = 0;
+    if (transparent) {
+      const verification = await verifyImageAlpha(dataUrl);
+      cornerAlpha = verification.cornerAlpha;
+    }
+
+    return { dataUrl, cornerAlpha };
+  } finally {
+    if (offscreenContainer.parentNode) {
+      offscreenContainer.parentNode.removeChild(offscreenContainer);
+    }
+  }
 }
 
 /**
  * Batch export multiple pages into a ZIP file with guaranteed alpha transparency
+ * and isolated unscaled DOM snapshots for every page.
  */
 export async function exportPagesToZip(
   project: ProjectState,
@@ -146,6 +184,8 @@ export async function exportPagesToZip(
   const scale = options.scale || 1;
   const transparent = options.transparent !== false;
   const total = pagesToExport.length;
+  const width = project.canvas.width;
+  const height = project.canvas.height;
 
   const folderName = `Quran-Layer-${project.selectedSurah.nameLatin.replace(/[^a-zA-Z0-9]/g, '-')}`;
   const folder = zip.folder(folderName) || zip;
@@ -172,25 +212,59 @@ export async function exportPagesToZip(
       await document.fonts.ready;
     }
 
-    // Capture transparent blob
-    const blob = await toBlob(node, {
-      pixelRatio: scale,
-      backgroundColor: transparent ? undefined : '#000000',
-      quality: 1,
-      style: {
-        backgroundColor: transparent ? 'transparent' : '#000000',
-        backgroundImage: 'none',
-        boxShadow: 'none',
-        border: 'none',
-        outline: 'none',
-      },
-      filter: (domNode) => {
-        if (domNode instanceof HTMLElement && domNode.classList.contains('safe-guide')) {
-          return false;
-        }
-        return true;
-      },
+    // Isolated unscaled offscreen container for batch rendering
+    const offscreenContainer = document.createElement('div');
+    offscreenContainer.style.position = 'fixed';
+    offscreenContainer.style.left = '-99999px';
+    offscreenContainer.style.top = '0';
+    offscreenContainer.style.width = `${width}px`;
+    offscreenContainer.style.height = `${height}px`;
+    offscreenContainer.style.transform = 'none';
+    offscreenContainer.style.zIndex = '-99999';
+    offscreenContainer.style.opacity = '1';
+    offscreenContainer.style.pointerEvents = 'none';
+    offscreenContainer.style.overflow = 'hidden';
+    offscreenContainer.style.backgroundColor = transparent ? 'transparent' : '#000000';
+
+    const clone = node.cloneNode(true) as HTMLElement;
+    clone.style.width = `${width}px`;
+    clone.style.height = `${height}px`;
+    clone.style.transform = 'none';
+    clone.style.margin = '0';
+    clone.style.position = 'relative';
+    clone.style.backgroundColor = transparent ? 'transparent' : (node.style.backgroundColor || '#000000');
+
+    clone.querySelectorAll('.safe-guide').forEach((el) => el.remove());
+    clone.querySelectorAll('[class*="ring-"]').forEach((el) => {
+      el.classList.remove('ring-2', 'ring-[#B89555]', 'ring-[#B89555]/50');
     });
+
+    offscreenContainer.appendChild(clone);
+    document.body.appendChild(offscreenContainer);
+
+    let blob: Blob | null = null;
+    try {
+      blob = await toBlob(clone, {
+        pixelRatio: scale,
+        backgroundColor: transparent ? undefined : '#000000',
+        quality: 1,
+        cacheBust: false,
+        width,
+        height,
+        style: {
+          backgroundColor: transparent ? 'transparent' : '#000000',
+          backgroundImage: 'none',
+          boxShadow: 'none',
+          border: 'none',
+          outline: 'none',
+          transform: 'none',
+        },
+      });
+    } finally {
+      if (offscreenContainer.parentNode) {
+        offscreenContainer.parentNode.removeChild(offscreenContainer);
+      }
+    }
 
     if (blob) {
       const filename = `${project.selectedSurah.nameLatin.replace(/[^a-zA-Z0-9]/g, '-')}-${String(page.pageNumber).padStart(3, '0')}.png`;

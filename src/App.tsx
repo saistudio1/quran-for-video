@@ -73,15 +73,23 @@ export default function App() {
   const [videoPreviewModalOpen, setVideoPreviewModalOpen] = useState<boolean>(false);
   const [attributionModalOpen, setAttributionModalOpen] = useState<boolean>(false);
 
+  // UI Mode: 'pc' (Studio 3 Kolom) vs 'mobile' (Canva Style Smartphone)
+  const [uiMode, setUiMode] = useState<'pc' | 'mobile'>(() => {
+    if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+      return 'mobile';
+    }
+    return 'pc';
+  });
+
   // Mobile Bottom Drawer State
   const [mobileActiveDrawer, setMobileActiveDrawer] = useState<'quran' | 'pages' | 'templates' | 'assets' | 'properties' | 'canvas_settings' | null>(null);
 
   // Canvas DOM ref for PNG export
   const canvasRef = useRef<HTMLDivElement>(null);
 
-  // Auto-fit initial zoom calculation based on window size
+  // Auto-fit initial zoom calculation based on window size and active UI mode
   const calculateInitialFitZoom = useCallback(() => {
-    const isMobile = typeof window !== 'undefined' && window.innerWidth < 1024;
+    const isMobile = uiMode === 'mobile';
     const availableWidth = isMobile
       ? Math.max(260, window.innerWidth - 32)
       : Math.max(300, window.innerWidth - 320 - 320 - 64);
@@ -92,7 +100,7 @@ export default function App() {
     const scaleY = availableHeight / project.canvas.height;
     const bestFit = Math.min(scaleX, scaleY, 0.85);
     setZoom(Math.max(0.18, Math.min(1.2, Number(bestFit.toFixed(2)))));
-  }, [project.canvas.width, project.canvas.height]);
+  }, [project.canvas.width, project.canvas.height, uiMode]);
 
   useEffect(() => {
     calculateInitialFitZoom();
@@ -541,39 +549,43 @@ export default function App() {
         onOpenProjectsModal={() => setProjectsModalOpen(true)}
         onOpenVideoPreviewModal={() => setVideoPreviewModalOpen(true)}
         onOpenAttributionModal={() => setAttributionModalOpen(true)}
+        uiMode={uiMode}
+        onChangeUiMode={setUiMode}
       />
 
       {/* 2. Workspace Body: Left Sidebar + Center Canvas + Right Properties Panel */}
       <div className="flex-1 flex overflow-hidden relative">
-        {/* Left Sidebar (Desktop Only) */}
-        <div className="hidden lg:flex h-full shrink-0">
-          <LeftSidebar
-            selectedSurah={project.selectedSurah}
-            onSelectSurah={handleSelectSurah}
-            isLoadingSurah={isLoadingSurah}
-            surahError={surahError}
-            onRetryLoadSurah={handleRetryLoadSurah}
-            availableVerses={availableVerses}
-            selectedVerseNumbers={selectedVerseNumbers}
-            onToggleVerseSelection={handleToggleVerseSelection}
-            onSelectAllVerses={handleSelectAllVerses}
-            onSelectVerseRange={handleSelectVerseRange}
-            onApplyVersesToProject={handleApplyVersesToProject}
-            pages={project.pages}
-            activePageIndex={project.activePageIndex}
-            onSelectPage={handleSelectPage}
-            onAddPage={handleAddPage}
-            onDuplicatePage={handleDuplicatePage}
-            onDeletePage={handleDeletePage}
-            onMovePage={handleMovePage}
-            layoutPreset={project.layoutPreset}
-            onSelectLayoutPreset={handleSelectLayoutPreset}
-            customFonts={project.customFonts}
-            onUploadCustomFont={handleUploadCustomFont}
-            arabicStyle={project.styles.arabic}
-            onUpdateArabicStyle={handleUpdateArabicStyle}
-          />
-        </div>
+        {/* Left Sidebar (Active in PC Mode) */}
+        {uiMode === 'pc' && (
+          <div className="flex h-full shrink-0">
+            <LeftSidebar
+              selectedSurah={project.selectedSurah}
+              onSelectSurah={handleSelectSurah}
+              isLoadingSurah={isLoadingSurah}
+              surahError={surahError}
+              onRetryLoadSurah={handleRetryLoadSurah}
+              availableVerses={availableVerses}
+              selectedVerseNumbers={selectedVerseNumbers}
+              onToggleVerseSelection={handleToggleVerseSelection}
+              onSelectAllVerses={handleSelectAllVerses}
+              onSelectVerseRange={handleSelectVerseRange}
+              onApplyVersesToProject={handleApplyVersesToProject}
+              pages={project.pages}
+              activePageIndex={project.activePageIndex}
+              onSelectPage={handleSelectPage}
+              onAddPage={handleAddPage}
+              onDuplicatePage={handleDuplicatePage}
+              onDeletePage={handleDeletePage}
+              onMovePage={handleMovePage}
+              layoutPreset={project.layoutPreset}
+              onSelectLayoutPreset={handleSelectLayoutPreset}
+              customFonts={project.customFonts}
+              onUploadCustomFont={handleUploadCustomFont}
+              arabicStyle={project.styles.arabic}
+              onUpdateArabicStyle={handleUpdateArabicStyle}
+            />
+          </div>
+        )}
 
         {/* Center Canvas Viewport */}
         <CenterCanvas
@@ -586,34 +598,37 @@ export default function App() {
           selectedLayerId={project.selectedLayerId}
           onSelectLayer={(layerId) => {
             setProject((prev) => ({ ...prev, selectedLayerId: layerId }));
-            if (layerId && typeof window !== 'undefined' && window.innerWidth < 1024) {
+            if (layerId && uiMode === 'mobile') {
               setMobileActiveDrawer('properties');
             }
           }}
         />
 
-        {/* Right Sidebar: Properties Panel (Desktop Only) */}
-        <div className="hidden lg:flex h-full shrink-0">
-          <PropertiesPanel
-            project={project}
-            selectedLayerId={project.selectedLayerId}
-            onSelectLayer={(layerId) =>
-              setProject((prev) => ({ ...prev, selectedLayerId: layerId }))
-            }
-            onUpdateArabicStyle={handleUpdateArabicStyle}
-            onUpdateTransliterationStyle={handleUpdateTransliterationStyle}
-            onUpdateTranslationStyle={handleUpdateTranslationStyle}
-            onUpdateMetaStyle={handleUpdateMetaStyle}
-            onUpdateCanvasConfig={handleUpdateCanvasConfig}
-            onUpdatePaginationConfig={handleUpdatePaginationConfig}
-          />
-        </div>
+        {/* Right Sidebar: Properties Panel (Active in PC Mode) */}
+        {uiMode === 'pc' && (
+          <div className="flex h-full shrink-0">
+            <PropertiesPanel
+              project={project}
+              selectedLayerId={project.selectedLayerId}
+              onSelectLayer={(layerId) =>
+                setProject((prev) => ({ ...prev, selectedLayerId: layerId }))
+              }
+              onUpdateArabicStyle={handleUpdateArabicStyle}
+              onUpdateTransliterationStyle={handleUpdateTransliterationStyle}
+              onUpdateTranslationStyle={handleUpdateTranslationStyle}
+              onUpdateMetaStyle={handleUpdateMetaStyle}
+              onUpdateCanvasConfig={handleUpdateCanvasConfig}
+              onUpdatePaginationConfig={handleUpdatePaginationConfig}
+            />
+          </div>
+        )}
       </div>
 
-      {/* --- MOBILE CANVA-STYLE CONTROLS (< 1024px) --- */}
-
-      {/* Floating Quick Page Switcher & Zoom */}
-      <div className="lg:hidden fixed bottom-16 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1.5 px-3 py-1.5 bg-slate-900/90 text-white backdrop-blur-md rounded-full shadow-lg border border-slate-700/50 text-xs">
+      {/* --- MOBILE CANVA-STYLE CONTROLS (Active in Mobile Mode) --- */}
+      {uiMode === 'mobile' && (
+        <>
+          {/* Floating Quick Page Switcher & Zoom */}
+          <div className="fixed bottom-16 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1.5 px-3 py-1.5 bg-slate-900/90 text-white backdrop-blur-md rounded-full shadow-lg border border-slate-700/50 text-xs">
         <button
           onClick={() => handleSelectPage(Math.max(0, project.activePageIndex - 1))}
           disabled={project.activePageIndex === 0}
@@ -661,7 +676,7 @@ export default function App() {
       </div>
 
       {/* Mobile Bottom Navigation Bar */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-30 bg-white/95 backdrop-blur-md border-t border-slate-200 px-2 py-1 flex items-center justify-around shadow-xl">
+      <nav className="fixed bottom-0 left-0 right-0 z-30 bg-white/95 backdrop-blur-md border-t border-slate-200 px-2 py-1 flex items-center justify-around shadow-xl">
         <button
           onClick={() => setMobileActiveDrawer(mobileActiveDrawer === 'quran' ? null : 'quran')}
           className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl text-[10px] font-medium transition-colors ${
@@ -723,7 +738,7 @@ export default function App() {
 
       {/* Mobile Drawer Bottom Sheet */}
       {mobileActiveDrawer && (
-        <div className="lg:hidden fixed inset-0 z-40 flex flex-col justify-end">
+        <div className="fixed inset-0 z-40 flex flex-col justify-end">
           {/* Backdrop */}
           <div 
             className="absolute inset-0 bg-black/40 backdrop-blur-xs transition-opacity"
@@ -812,6 +827,8 @@ export default function App() {
           </div>
         </div>
       )}
+        </>
+      )}
 
       {/* 3. Modals */}
       <ExportModal
@@ -858,35 +875,70 @@ export default function App() {
             (styles.meta.bismillahPlacement === 'every_page' ? true : hasVerseOne);
 
           return (
-            <div className="flex flex-col space-y-4 text-center">
+            <div className="flex flex-col text-center" style={{ gap: `${Math.round(project.pagination.verseSpacing * 0.7)}px` }}>
               {styles.meta.showSurahName && (
-                <div className="text-xs uppercase tracking-widest text-[#B89555] font-semibold">
+                <div 
+                  className="uppercase tracking-widest font-semibold"
+                  style={{
+                    fontSize: `${Math.max(12, Math.round(styles.meta.fontSize * 0.75))}px`,
+                    color: styles.meta.color,
+                    fontFamily: styles.meta.fontFamily,
+                  }}
+                >
                   QS. {project.selectedSurah.nameLatin}
                 </div>
               )}
               {shouldShowBismillah && (
                 <div 
-                  className="font-amiri-quran font-amiri text-2xl font-bold text-white drop-shadow-md leading-relaxed my-1" 
+                  className="font-bold drop-shadow-md my-1" 
+                  style={{
+                    fontFamily: styles.arabic.fontFamily,
+                    fontSize: `${Math.max(20, Math.round(styles.arabic.fontSize * 0.75))}px`,
+                    color: styles.arabic.color,
+                  }}
                   dir="rtl"
                 >
                   {styles.meta.bismillahArabic}
                 </div>
               )}
               {verses.map((v) => (
-                <div key={v.number} className="space-y-2">
+                <div key={v.number} className="flex flex-col items-center">
                   <div 
-                    className="font-amiri text-2xl font-bold text-white drop-shadow-md leading-relaxed" 
+                    className="font-bold drop-shadow-md leading-relaxed" 
+                    style={{
+                      fontFamily: styles.arabic.fontFamily,
+                      fontSize: `${Math.max(22, Math.round(styles.arabic.fontSize * 0.75))}px`,
+                      color: styles.arabic.color,
+                      lineHeight: styles.arabic.lineHeight,
+                      paddingBottom: '8px',
+                      marginBottom: styles.transliteration.show || styles.translation.show ? `${Math.round((styles.arabic.bottomSpacing ?? 28) * 0.6)}px` : '0px',
+                    }}
                     dir="rtl"
                   >
                     {v.textArabic}
                   </div>
                   {styles.transliteration.show && (
-                    <div className="text-xs text-[#B89555] italic drop-shadow-xs">
+                    <div 
+                      className="italic drop-shadow-xs"
+                      style={{
+                        fontFamily: styles.transliteration.fontFamily,
+                        fontSize: `${Math.max(12, Math.round(styles.transliteration.fontSize * 0.75))}px`,
+                        color: styles.transliteration.color,
+                        marginBottom: styles.translation.show ? `${Math.round((styles.transliteration.bottomSpacing ?? 18) * 0.6)}px` : '0px',
+                      }}
+                    >
                       {v.transliteration}
                     </div>
                   )}
                   {styles.translation.show && (
-                    <div className="text-xs text-slate-200 drop-shadow-xs">
+                    <div 
+                      className="drop-shadow-xs"
+                      style={{
+                        fontFamily: styles.translation.fontFamily,
+                        fontSize: `${Math.max(12, Math.round(styles.translation.fontSize * 0.75))}px`,
+                        color: styles.translation.color,
+                      }}
+                    >
                       "{v.translationId}"
                     </div>
                   )}

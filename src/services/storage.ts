@@ -53,6 +53,7 @@ export function createDefaultProject(): ProjectState {
         textAlign: 'center',
         showVerseMarker: true,
         markerStyle: 'ornament',
+        bottomSpacing: 28,
         ...defaultPreset.styles.arabic,
       },
       transliteration: {
@@ -65,6 +66,7 @@ export function createDefaultProject(): ProjectState {
         lineHeight: 1.6,
         letterSpacing: 0.2,
         textAlign: 'center',
+        bottomSpacing: 18,
         ...defaultPreset.styles.transliteration,
       },
       translation: {

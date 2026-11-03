@@ -216,12 +216,20 @@ export const CenterCanvas = forwardRef<HTMLDivElement, CenterCanvasProps>(({
               {/* Verses Container */}
               <div 
                 className="flex flex-col"
-                style={{ gap: `${project.pagination.verseSpacing}px` }}
+                style={{ 
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: `${project.pagination.verseSpacing || 40}px` 
+                }}
               >
                 {activePageVerses.map((verse) => (
                   <div 
                     key={verse.number} 
-                    className="flex flex-col space-y-4"
+                    className="flex flex-col w-full"
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                    }}
                   >
                     {/* Layer 1: Quranic Arabic Typography */}
                     <div
@@ -229,15 +237,20 @@ export const CenterCanvas = forwardRef<HTMLDivElement, CenterCanvasProps>(({
                         e.stopPropagation();
                         onSelectLayer('arabic');
                       }}
-                      className={`p-3 rounded-xl transition-all cursor-pointer ${
+                      className={`rounded-xl transition-all cursor-pointer ${
                         selectedLayerId === 'arabic' && !isExporting
                           ? 'ring-2 ring-[#B89555] bg-white/5'
                           : 'hover:bg-white/5'
                       }`}
-                      style={{ textAlign: styles.arabic.textAlign }}
+                      style={{ 
+                        textAlign: styles.arabic.textAlign,
+                        padding: '12px 14px',
+                        paddingBottom: '20px', // Extra bottom breathing space specifically for Arabic kasrah & descenders
+                        marginBottom: `${styles.transliteration.show || styles.translation.show ? (styles.arabic.bottomSpacing ?? 28) : 0}px`,
+                      }}
                       dir="rtl"
                     >
-                      <span
+                      <div
                         style={{
                           fontFamily: styles.arabic.fontFamily,
                           fontSize: `${styles.arabic.fontSize}px`,
@@ -245,13 +258,17 @@ export const CenterCanvas = forwardRef<HTMLDivElement, CenterCanvasProps>(({
                           color: styles.arabic.color,
                           lineHeight: styles.arabic.lineHeight,
                           letterSpacing: `${styles.arabic.letterSpacing}px`,
-                          wordSpacing: '4px',
+                          wordSpacing: '6px',
+                          display: 'block',
+                          direction: 'rtl',
+                          margin: 0,
+                          padding: 0,
                         }}
-                        className="inline leading-relaxed selection:bg-amber-400/20"
+                        className="selection:bg-amber-400/20"
                       >
                         {verse.textArabic}
                         {renderVerseMarker(verse.number)}
-                      </span>
+                      </div>
                     </div>
 
                     {/* Layer 2: Latin Transliteration */}
@@ -261,12 +278,16 @@ export const CenterCanvas = forwardRef<HTMLDivElement, CenterCanvasProps>(({
                           e.stopPropagation();
                           onSelectLayer('transliteration');
                         }}
-                        className={`p-2.5 rounded-xl transition-all cursor-pointer ${
+                        className={`rounded-xl transition-all cursor-pointer ${
                           selectedLayerId === 'transliteration' && !isExporting
                             ? 'ring-2 ring-[#B89555] bg-white/5'
                             : 'hover:bg-white/5'
                         }`}
-                        style={{ textAlign: styles.transliteration.textAlign }}
+                        style={{ 
+                          textAlign: styles.transliteration.textAlign,
+                          padding: '8px 14px',
+                          marginBottom: `${styles.translation.show ? (styles.transliteration.bottomSpacing ?? 18) : 0}px`,
+                        }}
                       >
                         <p
                           style={{
@@ -277,8 +298,10 @@ export const CenterCanvas = forwardRef<HTMLDivElement, CenterCanvasProps>(({
                             color: styles.transliteration.color,
                             lineHeight: styles.transliteration.lineHeight,
                             letterSpacing: `${styles.transliteration.letterSpacing}px`,
+                            margin: 0,
+                            padding: 0,
                           }}
-                          className="leading-relaxed selection:bg-amber-400/20"
+                          className="selection:bg-amber-400/20"
                         >
                           {verse.transliteration}
                         </p>
@@ -292,12 +315,15 @@ export const CenterCanvas = forwardRef<HTMLDivElement, CenterCanvasProps>(({
                           e.stopPropagation();
                           onSelectLayer('translation');
                         }}
-                        className={`p-2.5 rounded-xl transition-all cursor-pointer ${
+                        className={`rounded-xl transition-all cursor-pointer ${
                           selectedLayerId === 'translation' && !isExporting
                             ? 'ring-2 ring-[#B89555] bg-white/5'
                             : 'hover:bg-white/5'
                         }`}
-                        style={{ textAlign: styles.translation.textAlign }}
+                        style={{ 
+                          textAlign: styles.translation.textAlign,
+                          padding: '8px 14px',
+                        }}
                       >
                         <p
                           style={{
@@ -307,8 +333,10 @@ export const CenterCanvas = forwardRef<HTMLDivElement, CenterCanvasProps>(({
                             color: styles.translation.color,
                             lineHeight: styles.translation.lineHeight,
                             letterSpacing: `${styles.translation.letterSpacing}px`,
+                            margin: 0,
+                            padding: 0,
                           }}
-                          className="leading-relaxed selection:bg-amber-400/20"
+                          className="selection:bg-amber-400/20"
                         >
                           "{verse.translationId}"
                         </p>

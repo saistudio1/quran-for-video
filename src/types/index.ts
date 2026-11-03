@@ -38,6 +38,7 @@ export interface ArabicStyle {
   textAlign: 'center' | 'right' | 'left';
   showVerseMarker: boolean;
   markerStyle: 'standard' | 'ornament' | 'simple' | 'none';
+  bottomSpacing?: number; // Distance between Arabic text and Latin transliteration (px)
 }
 
 export interface LatinStyle {
@@ -50,6 +51,7 @@ export interface LatinStyle {
   lineHeight: number;
   letterSpacing: number;
   textAlign: 'center' | 'right' | 'left';
+  bottomSpacing?: number; // Distance between Latin transliteration and Indonesian translation (px)
 }
 
 export interface TranslationStyle {

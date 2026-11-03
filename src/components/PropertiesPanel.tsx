@@ -190,6 +190,26 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
               />
             </div>
 
+            {/* Bottom Spacing Slider to Latin */}
+            <div className="space-y-1.5">
+              <div className="flex justify-between text-xs font-medium text-slate-700">
+                <span>Jarak ke Teks Latin (Bawah)</span>
+                <span className="font-mono text-[#B89555] font-bold">{styles.arabic.bottomSpacing ?? 28} px</span>
+              </div>
+              <input
+                type="range"
+                min={10}
+                max={90}
+                step={2}
+                value={styles.arabic.bottomSpacing ?? 28}
+                onChange={(e) => onUpdateArabicStyle({ bottomSpacing: parseInt(e.target.value) })}
+                className="w-full accent-[#B89555] cursor-pointer"
+              />
+              <span className="text-[10px] text-slate-400 block">
+                Memberikan ruang bebas di bawah harakat kasrah agar tidak menumpuk dengan latin.
+              </span>
+            </div>
+
             {/* Font Weight */}
             <div className="space-y-1.5">
               <label className="text-xs font-semibold text-slate-700 block">Ketebalan</label>
@@ -327,6 +347,23 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                 max={36}
                 value={styles.transliteration.fontSize}
                 onChange={(e) => onUpdateTransliterationStyle({ fontSize: parseInt(e.target.value) })}
+                className="w-full accent-[#B89555] cursor-pointer"
+              />
+            </div>
+
+            {/* Bottom Spacing Slider to Translation */}
+            <div className="space-y-1.5">
+              <div className="flex justify-between text-xs font-medium text-slate-700">
+                <span>Jarak ke Terjemahan (Bawah)</span>
+                <span className="font-mono text-[#B89555] font-bold">{styles.transliteration.bottomSpacing ?? 18} px</span>
+              </div>
+              <input
+                type="range"
+                min={6}
+                max={60}
+                step={2}
+                value={styles.transliteration.bottomSpacing ?? 18}
+                onChange={(e) => onUpdateTransliterationStyle({ bottomSpacing: parseInt(e.target.value) })}
                 className="w-full accent-[#B89555] cursor-pointer"
               />
             </div>
