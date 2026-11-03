@@ -7,8 +7,7 @@ import {
   FolderOpen, 
   Copy, 
   Trash2, 
-  Calendar,
-  CheckCircle2
+  Calendar
 } from 'lucide-react';
 import { ProjectState } from '../types';
 import { 
@@ -115,36 +114,37 @@ export const ProjectsModal: React.FC<ProjectsModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl border border-slate-200">
-        <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-amber-50 border border-amber-200 flex items-center justify-center text-[#B89555]">
-              <FolderOpen className="w-4 h-4" />
+    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4">
+      {/* Choreography: Smooth Scale-in entrance with cubic-bezier(0.16, 1, 0.3, 1) */}
+      <div className="neu-flat animate-sheet-up bg-[#edf2f7] rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl border border-white/80">
+        <div className="flex items-center justify-between pb-3 border-b border-slate-300/60">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-2xl neu-flat flex items-center justify-center text-[#B89555]">
+              <FolderOpen className="w-5 h-5" />
             </div>
             <div>
               <h3 className="text-sm font-bold text-slate-900">Kelola Proyek Al-Qur'an</h3>
-              <p className="text-[11px] text-slate-500">Tersimpan secara lokal di browser Anda</p>
+              <p className="text-[11px] text-slate-500 font-medium">Tersimpan secara lokal di browser Anda</p>
             </div>
           </div>
-          <button onClick={onClose} className="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg">
+          <button onClick={onClose} className="neu-button p-2 rounded-full text-slate-400 hover:text-slate-800 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]">
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Action Bar */}
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-3 gap-2.5">
           <button
             onClick={handleCreateNew}
-            className="py-2 px-3 text-xs font-bold text-white bg-[#0F172A] hover:bg-slate-800 rounded-xl flex items-center justify-center gap-1.5 shadow-xs transition-colors"
+            className="neu-button-primary py-2.5 px-3 text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 active:translate-y-0.5"
           >
-            <FolderPlus className="w-3.5 h-3.5 text-[#B89555]" />
+            <FolderPlus className="w-3.5 h-3.5 text-white" />
             <span>Proyek Baru</span>
           </button>
 
           <button
             onClick={handleExportJson}
-            className="py-2 px-3 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl flex items-center justify-center gap-1.5 transition-colors border border-slate-200"
+            className="neu-button py-2.5 px-3 text-xs font-bold text-slate-700 rounded-xl flex items-center justify-center gap-1.5 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 active:translate-y-0.5"
             title="Cadangkan proyek saat ini ke file JSON"
           >
             <FileDown className="w-3.5 h-3.5 text-[#B89555]" />
@@ -161,7 +161,7 @@ export const ProjectsModal: React.FC<ProjectsModalProps> = ({
 
           <button
             onClick={() => fileInputRef.current?.click()}
-            className="py-2 px-3 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl flex items-center justify-center gap-1.5 transition-colors border border-slate-200"
+            className="neu-button py-2.5 px-3 text-xs font-bold text-slate-700 rounded-xl flex items-center justify-center gap-1.5 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 active:translate-y-0.5"
             title="Buka proyek dari file JSON backup"
           >
             <FileUp className="w-3.5 h-3.5 text-[#B89555]" />
@@ -169,11 +169,11 @@ export const ProjectsModal: React.FC<ProjectsModalProps> = ({
           </button>
         </div>
 
-        {/* Saved Projects List */}
+        {/* Saved Projects List with Staggered Entrance */}
         <div className="space-y-1.5 pt-2">
-          <span className="text-xs font-semibold text-slate-700 block">Proyek Tersimpan</span>
-          <div className="max-h-56 overflow-y-auto border border-slate-200 rounded-xl divide-y divide-slate-100 bg-white">
-            {projectsList.map((p) => {
+          <span className="text-xs font-bold text-slate-700 block">Proyek Tersimpan</span>
+          <div className="max-h-56 overflow-y-auto neu-inset rounded-2xl divide-y divide-slate-200/60 p-1.5">
+            {projectsList.map((p, idx) => {
               const isCurrent = p.id === currentProject.id;
               const dateStr = new Date(p.updatedAt).toLocaleDateString('id-ID', {
                 day: 'numeric',
@@ -185,9 +185,13 @@ export const ProjectsModal: React.FC<ProjectsModalProps> = ({
               return (
                 <div
                   key={p.id}
+                  /* Choreography: Staggered entrance 0.04s delay step */
+                  style={{ animationDelay: `${idx * 0.04}s` }}
                   onClick={() => handleSelectProject(p.id)}
-                  className={`p-3 flex items-center justify-between cursor-pointer transition-colors ${
-                    isCurrent ? 'bg-amber-50/60' : 'hover:bg-slate-50'
+                  className={`animate-stagger-item p-3 rounded-xl flex items-center justify-between cursor-pointer transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                    isCurrent 
+                      ? 'bg-white shadow-[2px_2px_6px_rgba(166,178,196,0.4),-2px_-2px_6px_rgba(255,255,255,0.9)] text-[#B89555]' 
+                      : 'hover:bg-white/60 hover:translate-x-0.5'
                   }`}
                 >
                   <div className="min-w-0 pr-2">
@@ -196,28 +200,28 @@ export const ProjectsModal: React.FC<ProjectsModalProps> = ({
                         {p.name}
                       </span>
                       {isCurrent && (
-                        <span className="text-[10px] text-[#B89555] bg-amber-100 font-semibold px-1.5 py-0.2 rounded-full">
+                        <span className="text-[10px] text-[#B89555] neu-inset-sm font-bold px-2 py-0.5 rounded-md">
                           Aktif
                         </span>
                       )}
                     </div>
-                    <div className="flex items-center gap-1 text-[11px] text-slate-400 mt-0.5">
+                    <div className="flex items-center gap-1 text-[11px] text-slate-500 font-medium mt-0.5">
                       <Calendar className="w-3 h-3" />
                       <span>{dateStr}</span>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-1 shrink-0">
+                  <div className="flex items-center gap-1.5 shrink-0">
                     <button
                       onClick={(e) => handleDuplicate(p.id, e)}
-                      className="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-100"
+                      className="p-1.5 text-slate-400 hover:text-slate-800 rounded-lg hover:bg-slate-200/60 transition-colors"
                       title="Duplikat Proyek"
                     >
                       <Copy className="w-3.5 h-3.5" />
                     </button>
                     <button
                       onClick={(e) => handleDelete(p.id, e)}
-                      className="p-1.5 text-slate-400 hover:text-red-600 rounded-lg hover:bg-red-50"
+                      className="p-1.5 text-slate-400 hover:text-red-600 rounded-lg hover:bg-red-50 transition-colors"
                       title="Hapus Proyek"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
@@ -235,10 +239,10 @@ export const ProjectsModal: React.FC<ProjectsModalProps> = ({
           </div>
         </div>
 
-        <div className="pt-2 border-t border-slate-100 flex justify-end">
+        <div className="pt-3 border-t border-slate-300/60 flex justify-end">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl"
+            className="neu-button px-4 py-2 text-xs font-bold text-slate-600 rounded-xl transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 active:translate-y-0.5"
           >
             Tutup
           </button>

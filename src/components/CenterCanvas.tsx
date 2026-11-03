@@ -81,15 +81,15 @@ export const CenterCanvas = forwardRef<HTMLDivElement, CenterCanvasProps>(({
 
   return (
     <div 
-      className="flex-1 bg-[#F1F5F9] overflow-auto flex items-center justify-center p-2 sm:p-6 pb-24 lg:pb-6 relative select-none"
+      className="flex-1 bg-[#e6ebf2] shadow-[inset_0_2px_8px_rgba(160,174,192,0.3)] overflow-auto flex items-center justify-center p-2 sm:p-6 pb-24 lg:pb-6 relative select-none"
       onClick={() => onSelectLayer('canvas')}
     >
-      {/* Zoom transform container */}
+      {/* Zoom transform container with organic anti-linear easing: 0.28s cubic-bezier(0.16, 1, 0.3, 1) */}
       <div
         style={{
           transform: `scale(${zoom})`,
           transformOrigin: 'center center',
-          transition: 'transform 0.15s ease-out',
+          transition: 'transform 0.28s cubic-bezier(0.16, 1, 0.3, 1)',
         }}
         className="flex items-center justify-center"
       >

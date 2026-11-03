@@ -4,10 +4,7 @@ import {
   Download, 
   FolderArchive, 
   CheckCircle2, 
-  AlertCircle, 
-  Sparkles,
-  Layers,
-  FileCheck
+  AlertCircle
 } from 'lucide-react';
 import { ProjectState, PageDefinition } from '../types';
 import { renderNodeToPng, exportPagesToZip, downloadDataUrl, ExportProgress } from '../services/exportService';
@@ -106,19 +103,20 @@ export const ExportModal: React.FC<ExportModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl max-w-lg w-full p-6 space-y-5 shadow-2xl border border-slate-200">
+    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4">
+      {/* Choreography: Smooth Scale-in entrance with cubic-bezier(0.16, 1, 0.3, 1) */}
+      <div className="neu-flat animate-sheet-up bg-[#edf2f7] rounded-3xl max-w-lg w-full p-6 space-y-5 shadow-2xl border border-white/80">
         {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-amber-50 border border-amber-200 flex items-center justify-center text-[#B89555]">
-              {exportMode === 'single' ? <Download className="w-4 h-4" /> : <FolderArchive className="w-4 h-4" />}
+        <div className="flex items-center justify-between pb-3 border-b border-slate-300/60">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-2xl neu-flat flex items-center justify-center text-[#B89555]">
+              {exportMode === 'single' ? <Download className="w-5 h-5" /> : <FolderArchive className="w-5 h-5" />}
             </div>
             <div>
               <h3 className="text-sm font-bold text-slate-900">
                 {exportMode === 'single' ? 'Ekspor PNG Halaman Aktif' : 'Ekspor Batch ZIP Seluruh Slide'}
               </h3>
-              <p className="text-[11px] text-slate-500">
+              <p className="text-[11px] text-slate-500 font-medium">
                 Format PNG Transparan resolusi tinggi untuk CapCut, Premiere, & DaVinci
               </p>
             </div>
@@ -126,20 +124,20 @@ export const ExportModal: React.FC<ExportModalProps> = ({
           <button
             onClick={onClose}
             disabled={isExporting}
-            className="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg"
+            className="neu-button p-2 rounded-full text-slate-400 hover:text-slate-800 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
-        {/* Mode Selector */}
-        <div className="grid grid-cols-2 gap-2 p-1 bg-slate-100 rounded-xl text-xs font-semibold">
+        {/* Mode Selector in Sunken Well */}
+        <div className="neu-segmented grid grid-cols-2 gap-1.5 p-1 rounded-2xl text-xs font-bold">
           <button
             onClick={() => setExportMode('single')}
             disabled={isExporting}
-            className={`py-2 rounded-lg flex items-center justify-center gap-1.5 transition-all ${
+            className={`py-2 rounded-xl flex items-center justify-center gap-1.5 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] ${
               exportMode === 'single'
-                ? 'bg-white text-slate-900 shadow-xs text-[#B89555]'
+                ? 'neu-segmented-btn-active'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
@@ -149,9 +147,9 @@ export const ExportModal: React.FC<ExportModalProps> = ({
           <button
             onClick={() => setExportMode('batch')}
             disabled={isExporting}
-            className={`py-2 rounded-lg flex items-center justify-center gap-1.5 transition-all ${
+            className={`py-2 rounded-xl flex items-center justify-center gap-1.5 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] ${
               exportMode === 'batch'
-                ? 'bg-white text-slate-900 shadow-xs text-[#B89555]'
+                ? 'neu-segmented-btn-active'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
@@ -164,45 +162,45 @@ export const ExportModal: React.FC<ExportModalProps> = ({
         <div className="space-y-4 text-xs">
           {/* Resolution Scale */}
           <div className="space-y-1.5">
-            <label className="font-semibold text-slate-700 block">Resolusi Ekspor</label>
-            <div className="grid grid-cols-2 gap-2">
+            <label className="font-bold text-slate-700 block">Resolusi Ekspor</label>
+            <div className="grid grid-cols-2 gap-2.5">
               <button
                 onClick={() => setScale(1)}
                 disabled={isExporting}
-                className={`p-2.5 rounded-xl border text-left transition-colors ${
+                className={`p-3 rounded-2xl text-left transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                   scale === 1
-                    ? 'border-[#B89555] bg-amber-50/70 font-bold text-slate-900'
-                    : 'border-slate-200 text-slate-600 hover:bg-slate-50'
+                    ? 'neu-flat ring-2 ring-[#B89555] font-bold text-slate-900'
+                    : 'neu-button text-slate-600'
                 }`}
               >
-                <div>1x Standard ({project.canvas.width} × {project.canvas.height})</div>
-                <div className="text-[10px] text-slate-400 font-normal">Ukuran video standar</div>
+                <div className="font-bold">1x Standard ({project.canvas.width} × {project.canvas.height})</div>
+                <div className="text-[10px] text-slate-500 font-medium">Ukuran video standar</div>
               </button>
               <button
                 onClick={() => setScale(2)}
                 disabled={isExporting}
-                className={`p-2.5 rounded-xl border text-left transition-colors ${
+                className={`p-3 rounded-2xl text-left transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                   scale === 2
-                    ? 'border-[#B89555] bg-amber-50/70 font-bold text-slate-900'
-                    : 'border-slate-200 text-slate-600 hover:bg-slate-50'
+                    ? 'neu-flat ring-2 ring-[#B89555] font-bold text-slate-900'
+                    : 'neu-button text-slate-600'
                 }`}
               >
-                <div>2x Ultra Crisp ({project.canvas.width * 2} × {project.canvas.height * 2})</div>
-                <div className="text-[10px] text-slate-400 font-normal">High-DPI / 4K jernih</div>
+                <div className="font-bold">2x Ultra Crisp ({project.canvas.width * 2} × {project.canvas.height * 2})</div>
+                <div className="text-[10px] text-slate-500 font-medium">High-DPI / 4K jernih</div>
               </button>
             </div>
           </div>
 
           {/* Transparency Switch */}
-          <div className="p-3 bg-slate-50 rounded-xl border border-slate-200/80 flex items-center justify-between">
+          <div className="neu-flat-sm p-3.5 rounded-2xl flex items-center justify-between">
             <div>
               <div className="flex items-center gap-1.5">
-                <span className="font-semibold text-slate-800">Latar Belakang Transparan (Alpha Channel)</span>
-                <span className="text-[10px] font-mono font-bold px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800 border border-emerald-200">
+                <span className="font-bold text-slate-800">Latar Belakang Transparan (Alpha Channel)</span>
+                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md neu-inset-sm text-emerald-700">
                   Alpha = 0
                 </span>
               </div>
-              <span className="text-[11px] text-slate-500 block mt-0.5">
+              <span className="text-[11px] text-slate-500 block mt-1 font-medium">
                 Murni transparan tanpa kotak-kotak papan catur. Teks menempel sempurna di atas timeline video Anda.
               </span>
             </div>
@@ -218,15 +216,15 @@ export const ExportModal: React.FC<ExportModalProps> = ({
           {/* Page range for Batch */}
           {exportMode === 'batch' && (
             <div className="space-y-1.5">
-              <label className="font-semibold text-slate-700 block">Cakupan Halaman</label>
+              <label className="font-bold text-slate-700 block">Cakupan Halaman</label>
               <div className="grid grid-cols-2 gap-2">
                 <button
                   onClick={() => setSelectedPagesMode('all')}
                   disabled={isExporting}
-                  className={`p-2 rounded-lg border text-center transition-colors ${
+                  className={`p-2.5 rounded-xl text-center transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                     selectedPagesMode === 'all'
-                      ? 'border-[#B89555] bg-amber-50 font-bold text-slate-900'
-                      : 'border-slate-200 text-slate-600 hover:bg-slate-50'
+                      ? 'neu-flat ring-2 ring-[#B89555] font-bold text-slate-900'
+                      : 'neu-button text-slate-600'
                   }`}
                 >
                   Semua Halaman ({project.pages.length} File)
@@ -234,10 +232,10 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                 <button
                   onClick={() => setSelectedPagesMode('current')}
                   disabled={isExporting}
-                  className={`p-2 rounded-lg border text-center transition-colors ${
+                  className={`p-2.5 rounded-xl text-center transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                     selectedPagesMode === 'current'
-                      ? 'border-[#B89555] bg-amber-50 font-bold text-slate-900'
-                      : 'border-slate-200 text-slate-600 hover:bg-slate-50'
+                      ? 'neu-flat ring-2 ring-[#B89555] font-bold text-slate-900'
+                      : 'neu-button text-slate-600'
                   }`}
                 >
                   Halaman Aktif ({activePageIndex + 1}) Saja
@@ -249,8 +247,8 @@ export const ExportModal: React.FC<ExportModalProps> = ({
 
         {/* Progress or status bar */}
         {isExporting && progress && (
-          <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl space-y-2 text-xs">
-            <div className="flex items-center justify-between font-semibold text-slate-800">
+          <div className="neu-flat-sm p-3.5 rounded-2xl space-y-2 text-xs">
+            <div className="flex items-center justify-between font-bold text-slate-800">
               <span>
                 {progress.status === 'rendering' 
                   ? `Merender slide ${progress.currentPage} dari ${progress.totalPages}...` 
@@ -260,9 +258,9 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                 {Math.round((progress.currentPage / Math.max(1, progress.totalPages)) * 100)}%
               </span>
             </div>
-            <div className="w-full bg-amber-200/50 h-2 rounded-full overflow-hidden">
+            <div className="w-full neu-inset-sm h-2.5 rounded-full overflow-hidden p-0.5">
               <div
-                className="bg-[#B89555] h-full transition-all duration-300 rounded-full"
+                className="bg-gradient-to-r from-[#c5a059] to-[#b08a46] h-full transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] rounded-full"
                 style={{
                   width: `${(progress.currentPage / Math.max(1, progress.totalPages)) * 100}%`,
                 }}
@@ -273,41 +271,41 @@ export const ExportModal: React.FC<ExportModalProps> = ({
 
         {/* Success or Error Alert */}
         {successMessage && (
-          <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-800 flex items-center gap-2">
+          <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-2xl text-xs text-emerald-800 flex items-center gap-2">
             <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-            <span>{successMessage}</span>
+            <span className="font-medium">{successMessage}</span>
           </div>
         )}
 
         {errorMessage && (
-          <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-800 flex items-center gap-2">
+          <div className="p-3 bg-red-50 border border-red-200 rounded-2xl text-xs text-red-800 flex items-center gap-2">
             <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
-            <span>{errorMessage}</span>
+            <span className="font-medium">{errorMessage}</span>
           </div>
         )}
 
         {/* Modal Action Buttons */}
-        <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+        <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-300/60">
           <button
             onClick={onClose}
             disabled={isExporting}
-            className="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition-colors"
+            className="neu-button px-4 py-2 text-xs font-bold text-slate-600 rounded-xl transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 active:translate-y-0.5"
           >
             Tutup
           </button>
           <button
             onClick={handleExport}
             disabled={isExporting}
-            className="px-5 py-2 text-xs font-bold text-white bg-[#0F172A] hover:bg-slate-800 disabled:opacity-40 rounded-xl shadow-xs transition-colors flex items-center gap-2"
+            className="neu-button-primary px-5 py-2 text-xs font-bold rounded-xl transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 active:translate-y-0.5 flex items-center gap-2"
           >
             {exportMode === 'single' ? (
               <>
-                <Download className="w-4 h-4 text-[#B89555]" />
+                <Download className="w-4 h-4 text-white" />
                 <span>Unduh PNG Transparan</span>
               </>
             ) : (
               <>
-                <FolderArchive className="w-4 h-4 text-[#B89555]" />
+                <FolderArchive className="w-4 h-4 text-white" />
                 <span>Unduh Paket ZIP</span>
               </>
             )}

@@ -517,7 +517,7 @@ export default function App() {
   };
 
   return (
-    <div className="flex flex-col h-screen w-screen overflow-hidden bg-[#F8FAFC] text-[#0F172A] font-sans antialiased">
+    <div className="flex flex-col h-screen w-screen overflow-hidden bg-[#edf2f7] text-slate-800 font-sans antialiased">
       {/* 1. Top Navigation Bar */}
       <TopToolbar
         projectName={project.name}
@@ -627,12 +627,12 @@ export default function App() {
       {/* --- MOBILE CANVA-STYLE CONTROLS (Active in Mobile Mode) --- */}
       {uiMode === 'mobile' && (
         <>
-          {/* Floating Quick Page Switcher & Zoom */}
-          <div className="fixed bottom-16 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1.5 px-3 py-1.5 bg-slate-900/90 text-white backdrop-blur-md rounded-full shadow-lg border border-slate-700/50 text-xs">
+          {/* Floating Quick Page Switcher & Zoom: Minimalist Neumorphic Pill */}
+          <div className="fixed bottom-16 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1.5 px-3 py-1.5 neu-flat bg-[#edf2f7] text-slate-800 rounded-full shadow-[3px_3px_10px_rgba(166,178,196,0.5),-3px_-3px_10px_rgba(255,255,255,0.95)] border border-white/70 text-xs">
         <button
           onClick={() => handleSelectPage(Math.max(0, project.activePageIndex - 1))}
           disabled={project.activePageIndex === 0}
-          className="p-1 rounded-full hover:bg-white/10 disabled:opacity-30 disabled:hover:bg-transparent"
+          className="p-1 rounded-full text-slate-600 hover:text-slate-900 disabled:opacity-25 transition-transform duration-180 ease-[cubic-bezier(0.16,1,0.3,1)] active:scale-90"
           title="Halaman Sebelumnya"
         >
           <ChevronLeft className="w-4 h-4" />
@@ -640,27 +640,27 @@ export default function App() {
 
         <button
           onClick={() => setMobileActiveDrawer('pages')}
-          className="px-2 py-0.5 rounded font-medium hover:bg-white/10 text-slate-100 flex items-center gap-1"
+          className="px-2.5 py-0.5 rounded-lg font-bold text-slate-800 flex items-center gap-1 neu-inset-sm transition-all duration-180 ease-[cubic-bezier(0.16,1,0.3,1)]"
         >
           <span>Hal {project.activePageIndex + 1}</span>
           <span className="text-slate-400">/</span>
-          <span className="text-slate-400">{project.pages.length}</span>
+          <span className="text-slate-500">{project.pages.length}</span>
         </button>
 
         <button
           onClick={() => handleSelectPage(Math.min(project.pages.length - 1, project.activePageIndex + 1))}
           disabled={project.activePageIndex >= project.pages.length - 1}
-          className="p-1 rounded-full hover:bg-white/10 disabled:opacity-30 disabled:hover:bg-transparent"
+          className="p-1 rounded-full text-slate-600 hover:text-slate-900 disabled:opacity-25 transition-transform duration-180 ease-[cubic-bezier(0.16,1,0.3,1)] active:scale-90"
           title="Halaman Berikutnya"
         >
           <ChevronRight className="w-4 h-4" />
         </button>
 
-        <div className="w-px h-3.5 bg-slate-700 mx-0.5" />
+        <div className="w-px h-3.5 bg-slate-300 mx-0.5" />
 
         <button
           onClick={handleAddPage}
-          className="p-1 rounded-full hover:bg-white/10 text-[#B89555] font-semibold"
+          className="p-1 rounded-full text-[#B89555] hover:text-[#9E7D3F] font-bold transition-transform duration-180 ease-[cubic-bezier(0.16,1,0.3,1)] active:scale-90"
           title="Tambah Halaman Baru"
         >
           <Plus className="w-4 h-4" />
@@ -668,19 +668,22 @@ export default function App() {
 
         <button
           onClick={calculateInitialFitZoom}
-          className="p-1 rounded-full hover:bg-white/10 text-slate-300"
+          className="p-1 rounded-full text-slate-600 hover:text-slate-900 transition-transform duration-180 ease-[cubic-bezier(0.16,1,0.3,1)] active:scale-90"
           title="Reset Zoom Pas Layar"
         >
           <Maximize2 className="w-3.5 h-3.5" />
         </button>
       </div>
 
-      {/* Mobile Bottom Navigation Bar */}
-      <nav className="fixed bottom-0 left-0 right-0 z-30 bg-white/95 backdrop-blur-md border-t border-slate-200 px-2 py-1 flex items-center justify-around shadow-xl">
+      {/* Mobile Bottom Navigation Bar: Neumorphic Dock with Anti-linear Easing */}
+      <nav className="fixed bottom-0 left-0 right-0 z-30 bg-[#edf2f7]/95 backdrop-blur-md border-t border-slate-300/70 px-2 py-1.5 flex items-center justify-around shadow-[0_-3px_12px_rgba(166,178,196,0.3)]">
         <button
           onClick={() => setMobileActiveDrawer(mobileActiveDrawer === 'quran' ? null : 'quran')}
-          className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl text-[10px] font-medium transition-colors ${
-            mobileActiveDrawer === 'quran' ? 'text-[#B89555] font-semibold' : 'text-slate-600 hover:text-slate-900'
+          /* Micro-interaction: 0.2s cubic-bezier(0.16, 1, 0.3, 1) hover elevation */
+          className={`flex flex-col items-center justify-center py-1.5 px-3 rounded-xl text-[10px] font-bold transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+            mobileActiveDrawer === 'quran' 
+              ? 'neu-flat text-[#B89555] shadow-[2px_2px_5px_rgba(166,178,196,0.4),-2px_-2px_5px_rgba(255,255,255,0.9)]' 
+              : 'text-slate-600 hover:text-slate-900 hover:-translate-y-0.5'
           }`}
         >
           <BookOpen className="w-5 h-5 mb-0.5" />
@@ -689,8 +692,10 @@ export default function App() {
 
         <button
           onClick={() => setMobileActiveDrawer(mobileActiveDrawer === 'pages' ? null : 'pages')}
-          className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl text-[10px] font-medium transition-colors ${
-            mobileActiveDrawer === 'pages' ? 'text-[#B89555] font-semibold' : 'text-slate-600 hover:text-slate-900'
+          className={`flex flex-col items-center justify-center py-1.5 px-3 rounded-xl text-[10px] font-bold transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+            mobileActiveDrawer === 'pages' 
+              ? 'neu-flat text-[#B89555] shadow-[2px_2px_5px_rgba(166,178,196,0.4),-2px_-2px_5px_rgba(255,255,255,0.9)]' 
+              : 'text-slate-600 hover:text-slate-900 hover:-translate-y-0.5'
           }`}
         >
           <Layers className="w-5 h-5 mb-0.5" />
@@ -704,8 +709,10 @@ export default function App() {
             }
             setMobileActiveDrawer(mobileActiveDrawer === 'properties' ? null : 'properties');
           }}
-          className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl text-[10px] font-medium transition-colors ${
-            mobileActiveDrawer === 'properties' && project.selectedLayerId !== 'canvas' ? 'text-[#B89555] font-semibold' : 'text-slate-600 hover:text-slate-900'
+          className={`flex flex-col items-center justify-center py-1.5 px-3 rounded-xl text-[10px] font-bold transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+            mobileActiveDrawer === 'properties' && project.selectedLayerId !== 'canvas' 
+              ? 'neu-flat text-[#B89555] shadow-[2px_2px_5px_rgba(166,178,196,0.4),-2px_-2px_5px_rgba(255,255,255,0.9)]' 
+              : 'text-slate-600 hover:text-slate-900 hover:-translate-y-0.5'
           }`}
         >
           <Type className="w-5 h-5 mb-0.5" />
@@ -714,8 +721,10 @@ export default function App() {
 
         <button
           onClick={() => setMobileActiveDrawer(mobileActiveDrawer === 'templates' ? null : 'templates')}
-          className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl text-[10px] font-medium transition-colors ${
-            mobileActiveDrawer === 'templates' ? 'text-[#B89555] font-semibold' : 'text-slate-600 hover:text-slate-900'
+          className={`flex flex-col items-center justify-center py-1.5 px-3 rounded-xl text-[10px] font-bold transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+            mobileActiveDrawer === 'templates' 
+              ? 'neu-flat text-[#B89555] shadow-[2px_2px_5px_rgba(166,178,196,0.4),-2px_-2px_5px_rgba(255,255,255,0.9)]' 
+              : 'text-slate-600 hover:text-slate-900 hover:-translate-y-0.5'
           }`}
         >
           <LayoutTemplate className="w-5 h-5 mb-0.5" />
@@ -727,8 +736,10 @@ export default function App() {
             setProject((prev) => ({ ...prev, selectedLayerId: 'canvas' }));
             setMobileActiveDrawer(mobileActiveDrawer === 'canvas_settings' ? null : 'canvas_settings');
           }}
-          className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl text-[10px] font-medium transition-colors ${
-            mobileActiveDrawer === 'canvas_settings' ? 'text-[#B89555] font-semibold' : 'text-slate-600 hover:text-slate-900'
+          className={`flex flex-col items-center justify-center py-1.5 px-3 rounded-xl text-[10px] font-bold transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+            mobileActiveDrawer === 'canvas_settings' 
+              ? 'neu-flat text-[#B89555] shadow-[2px_2px_5px_rgba(166,178,196,0.4),-2px_-2px_5px_rgba(255,255,255,0.9)]' 
+              : 'text-slate-600 hover:text-slate-900 hover:-translate-y-0.5'
           }`}
         >
           <Sliders className="w-5 h-5 mb-0.5" />
@@ -736,21 +747,21 @@ export default function App() {
         </button>
       </nav>
 
-      {/* Mobile Drawer Bottom Sheet */}
+      {/* Mobile Drawer Bottom Sheet: Smooth slide-up with cubic-bezier(0.16, 1, 0.3, 1) */}
       {mobileActiveDrawer && (
         <div className="fixed inset-0 z-40 flex flex-col justify-end">
-          {/* Backdrop */}
+          {/* Backdrop with fade */}
           <div 
-            className="absolute inset-0 bg-black/40 backdrop-blur-xs transition-opacity"
+            className="absolute inset-0 bg-black/40 backdrop-blur-xs transition-opacity duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]"
             onClick={() => setMobileActiveDrawer(null)}
           />
 
-          {/* Sheet Container */}
-          <div className="relative w-full max-h-[82vh] bg-white rounded-t-2xl shadow-2xl flex flex-col overflow-hidden border-t border-slate-200">
+          {/* Sheet Container: Neumorphic Base */}
+          <div className="animate-sheet-up relative w-full max-h-[82vh] bg-[#edf2f7] rounded-t-3xl shadow-2xl flex flex-col overflow-hidden border-t border-white/80">
             {/* Header / Grab Handle */}
-            <div className="p-3 pb-2 border-b border-slate-100 flex items-center justify-between bg-slate-50/90 relative">
-              <div className="w-10 h-1 bg-slate-300 rounded-full mx-auto absolute left-1/2 -translate-x-1/2 top-2" />
-              <div className="font-semibold text-xs text-slate-800 uppercase tracking-wider pt-2">
+            <div className="p-3.5 pb-2.5 border-b border-slate-200/80 flex items-center justify-between bg-[#edf2f7] relative">
+              <div className="w-12 h-1.5 bg-slate-400/60 rounded-full mx-auto absolute left-1/2 -translate-x-1/2 top-2.5" />
+              <div className="font-bold text-xs text-slate-800 uppercase tracking-wider pt-2">
                 {mobileActiveDrawer === 'quran' && 'Pilih Surah & Ayat'}
                 {mobileActiveDrawer === 'pages' && 'Kelola Halaman & Urutan'}
                 {mobileActiveDrawer === 'templates' && 'Pilihan Preset Template'}
@@ -760,9 +771,9 @@ export default function App() {
               </div>
               <button
                 onClick={() => setMobileActiveDrawer(null)}
-                className="p-1 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-200/50"
+                className="neu-button p-1.5 rounded-full text-slate-500 hover:text-slate-800 transition-all duration-180 ease-[cubic-bezier(0.16,1,0.3,1)]"
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4" />
               </button>
             </div>
 

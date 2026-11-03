@@ -4,15 +4,11 @@ import {
   AlignLeft, 
   AlignCenter, 
   AlignRight, 
-  Palette, 
-  Maximize2, 
   Layers, 
   Eye, 
   EyeOff, 
-  Settings2,
   Sparkles,
-  Sliders,
-  ChevronDown
+  Sliders
 } from 'lucide-react';
 import { 
   ProjectState, 
@@ -21,9 +17,7 @@ import {
   TranslationStyle, 
   HeaderStyle, 
   CanvasConfig, 
-  PaginationConfig,
-  CanvasPreset,
-  PaginationMode
+  PaginationConfig
 } from '../types';
 import { CANVAS_PRESETS } from '../data/canvasPresets';
 
@@ -64,18 +58,19 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
   const { canvas, styles, pagination } = project;
 
   return (
-    <aside className={`bg-white flex flex-col h-full select-none ${isMobileDrawer ? 'w-full border-none' : 'w-80 border-l border-slate-200 shrink-0 z-20 shadow-xs'}`}>
-      {/* Layer Selection Segmented Bar */}
-      <div className="p-3 border-b border-slate-200 bg-slate-50/70">
-        <label className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-1.5">
+    <aside className={`bg-[#edf2f7] flex flex-col h-full select-none ${isMobileDrawer ? 'w-full border-none' : 'w-80 border-l border-slate-300/60 shrink-0 z-20 shadow-[-2px_0_10px_rgba(166,178,196,0.25)]'}`}>
+      {/* Layer Selection Segmented Bar in Debossed Neumorphic Well */}
+      <div className="p-3 border-b border-slate-200/80 bg-[#edf2f7]">
+        <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500 block mb-1.5">
           Elemen Terpilih
         </label>
-        <div className="grid grid-cols-5 gap-1 p-1 bg-slate-200/60 rounded-xl text-xs font-semibold">
+        <div className="neu-segmented grid grid-cols-5 gap-1 p-1 rounded-xl text-xs font-bold">
           <button
             onClick={() => onSelectLayer('arabic')}
-            className={`py-1.5 rounded-lg transition-all text-center ${
+            /* Micro-interaction: anti-linear transition 0.2s cubic-bezier(0.16, 1, 0.3, 1) */
+            className={`py-1.5 rounded-lg transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] text-center ${
               selectedLayerId === 'arabic'
-                ? 'bg-white text-slate-900 shadow-xs text-[#B89555]'
+                ? 'neu-segmented-btn-active'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
@@ -83,9 +78,9 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
           </button>
           <button
             onClick={() => onSelectLayer('transliteration')}
-            className={`py-1.5 rounded-lg transition-all text-center ${
+            className={`py-1.5 rounded-lg transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] text-center ${
               selectedLayerId === 'transliteration'
-                ? 'bg-white text-slate-900 shadow-xs text-[#B89555]'
+                ? 'neu-segmented-btn-active'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
@@ -93,9 +88,9 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
           </button>
           <button
             onClick={() => onSelectLayer('translation')}
-            className={`py-1.5 rounded-lg transition-all text-center ${
+            className={`py-1.5 rounded-lg transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] text-center ${
               selectedLayerId === 'translation'
-                ? 'bg-white text-slate-900 shadow-xs text-[#B89555]'
+                ? 'neu-segmented-btn-active'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
@@ -103,9 +98,9 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
           </button>
           <button
             onClick={() => onSelectLayer('meta')}
-            className={`py-1.5 rounded-lg transition-all text-center ${
+            className={`py-1.5 rounded-lg transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] text-center ${
               selectedLayerId === 'meta'
-                ? 'bg-white text-slate-900 shadow-xs text-[#B89555]'
+                ? 'neu-segmented-btn-active'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
@@ -113,9 +108,9 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
           </button>
           <button
             onClick={() => onSelectLayer('canvas')}
-            className={`py-1.5 rounded-lg transition-all text-center ${
+            className={`py-1.5 rounded-lg transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] text-center ${
               selectedLayerId === 'canvas' || selectedLayerId === null
-                ? 'bg-white text-slate-900 shadow-xs text-[#B89555]'
+                ? 'neu-segmented-btn-active'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
@@ -124,12 +119,12 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
         </div>
       </div>
 
-      {/* Properties Scrollable Area */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-5">
+      {/* Properties Scrollable Area with Neumorphic Card Containers */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {/* ===================== ARABIC PROPERTIES ===================== */}
         {selectedLayerId === 'arabic' && (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+          <div className="neu-flat p-4 rounded-2xl space-y-4 animate-sheet-up">
+            <div className="flex items-center justify-between pb-2 border-b border-slate-200/80">
               <span className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
                 <Type className="w-4 h-4 text-[#B89555]" />
                 <span>Tipografi Teks Arab (RTL)</span>
@@ -138,13 +133,13 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
 
             {/* Font Family Selector */}
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-700 block">
+              <label className="text-xs font-bold text-slate-700 block">
                 Jenis Huruf Arab
               </label>
               <select
                 value={styles.arabic.fontFamily}
                 onChange={(e) => onUpdateArabicStyle({ fontFamily: e.target.value })}
-                className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-800 font-medium focus:ring-1 focus:ring-[#B89555]"
+                className="neu-input w-full px-3 py-2 text-xs rounded-xl text-slate-800 font-semibold"
               >
                 <option value="Amiri Quran">Amiri Quran (Utsmani Mushaf · SIL OFL 1.1)</option>
                 <option value="Amiri">Amiri (Klasik Naskh · SIL OFL 1.1)</option>
@@ -159,7 +154,7 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
 
             {/* Font Size Slider */}
             <div className="space-y-1.5">
-              <div className="flex justify-between text-xs font-medium text-slate-700">
+              <div className="flex justify-between text-xs font-semibold text-slate-700">
                 <span>Ukuran Huruf (Font Size)</span>
                 <span className="font-mono text-[#B89555] font-bold">{styles.arabic.fontSize} px</span>
               </div>
@@ -169,15 +164,15 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                 max={84}
                 value={styles.arabic.fontSize}
                 onChange={(e) => onUpdateArabicStyle({ fontSize: parseInt(e.target.value) })}
-                className="w-full accent-[#B89555] cursor-pointer"
+                className="neu-range w-full cursor-pointer"
               />
             </div>
 
             {/* Line Height Slider */}
             <div className="space-y-1.5">
-              <div className="flex justify-between text-xs font-medium text-slate-700">
+              <div className="flex justify-between text-xs font-semibold text-slate-700">
                 <span>Jarak Baris (Line Height)</span>
-                <span className="font-mono text-slate-600">{styles.arabic.lineHeight.toFixed(1)}</span>
+                <span className="font-mono text-slate-600 font-bold">{styles.arabic.lineHeight.toFixed(1)}</span>
               </div>
               <input
                 type="range"
@@ -186,13 +181,13 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                 step={0.1}
                 value={styles.arabic.lineHeight}
                 onChange={(e) => onUpdateArabicStyle({ lineHeight: parseFloat(e.target.value) })}
-                className="w-full accent-[#B89555] cursor-pointer"
+                className="neu-range w-full cursor-pointer"
               />
             </div>
 
             {/* Bottom Spacing Slider to Latin */}
             <div className="space-y-1.5">
-              <div className="flex justify-between text-xs font-medium text-slate-700">
+              <div className="flex justify-between text-xs font-semibold text-slate-700">
                 <span>Jarak ke Teks Latin (Bawah)</span>
                 <span className="font-mono text-[#B89555] font-bold">{styles.arabic.bottomSpacing ?? 28} px</span>
               </div>
@@ -203,33 +198,33 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                 step={2}
                 value={styles.arabic.bottomSpacing ?? 28}
                 onChange={(e) => onUpdateArabicStyle({ bottomSpacing: parseInt(e.target.value) })}
-                className="w-full accent-[#B89555] cursor-pointer"
+                className="neu-range w-full cursor-pointer"
               />
-              <span className="text-[10px] text-slate-400 block">
+              <span className="text-[10px] text-slate-500 block font-medium">
                 Memberikan ruang bebas di bawah harakat kasrah agar tidak menumpuk dengan latin.
               </span>
             </div>
 
             {/* Font Weight */}
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-700 block">Ketebalan</label>
+              <label className="text-xs font-bold text-slate-700 block">Ketebalan</label>
               <div className="grid grid-cols-2 gap-2 text-xs">
                 <button
                   onClick={() => onUpdateArabicStyle({ fontWeight: 'normal' })}
-                  className={`py-1.5 rounded-lg border transition-colors ${
+                  className={`py-1.5 rounded-xl transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                     styles.arabic.fontWeight === 'normal'
-                      ? 'border-[#B89555] bg-amber-50 text-slate-900 font-semibold'
-                      : 'border-slate-200 text-slate-600 hover:bg-slate-50'
+                      ? 'neu-flat ring-2 ring-[#B89555] text-slate-900 font-bold'
+                      : 'neu-button text-slate-600'
                   }`}
                 >
                   Reguler
                 </button>
                 <button
                   onClick={() => onUpdateArabicStyle({ fontWeight: 'bold' })}
-                  className={`py-1.5 rounded-lg border transition-colors ${
+                  className={`py-1.5 rounded-xl transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                     styles.arabic.fontWeight === 'bold'
-                      ? 'border-[#B89555] bg-amber-50 text-slate-900 font-semibold'
-                      : 'border-slate-200 text-slate-600 hover:bg-slate-50'
+                      ? 'neu-flat ring-2 ring-[#B89555] text-slate-900 font-bold'
+                      : 'neu-button text-slate-600'
                   }`}
                 >
                   Tebal (Bold)
@@ -239,14 +234,14 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
 
             {/* Text Alignment */}
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-700 block">Perataan Teks</label>
+              <label className="text-xs font-bold text-slate-700 block">Perataan Teks</label>
               <div className="grid grid-cols-3 gap-2">
                 <button
                   onClick={() => onUpdateArabicStyle({ textAlign: 'right' })}
-                  className={`py-1.5 flex items-center justify-center rounded-lg border ${
+                  className={`py-1.5 flex items-center justify-center rounded-xl transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                     styles.arabic.textAlign === 'right'
-                      ? 'border-[#B89555] bg-amber-50 text-[#B89555]'
-                      : 'border-slate-200 text-slate-600 hover:bg-slate-50'
+                      ? 'neu-flat ring-2 ring-[#B89555] text-[#B89555]'
+                      : 'neu-button text-slate-600'
                   }`}
                   title="Rata Kanan (Alami Arab)"
                 >
@@ -254,10 +249,10 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                 </button>
                 <button
                   onClick={() => onUpdateArabicStyle({ textAlign: 'center' })}
-                  className={`py-1.5 flex items-center justify-center rounded-lg border ${
+                  className={`py-1.5 flex items-center justify-center rounded-xl transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                     styles.arabic.textAlign === 'center'
-                      ? 'border-[#B89555] bg-amber-50 text-[#B89555]'
-                      : 'border-slate-200 text-slate-600 hover:bg-slate-50'
+                      ? 'neu-flat ring-2 ring-[#B89555] text-[#B89555]'
+                      : 'neu-button text-slate-600'
                   }`}
                   title="Rata Tengah"
                 >
@@ -265,10 +260,10 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                 </button>
                 <button
                   onClick={() => onUpdateArabicStyle({ textAlign: 'left' })}
-                  className={`py-1.5 flex items-center justify-center rounded-lg border ${
+                  className={`py-1.5 flex items-center justify-center rounded-xl transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                     styles.arabic.textAlign === 'left'
-                      ? 'border-[#B89555] bg-amber-50 text-[#B89555]'
-                      : 'border-slate-200 text-slate-600 hover:bg-slate-50'
+                      ? 'neu-flat ring-2 ring-[#B89555] text-[#B89555]'
+                      : 'neu-button text-slate-600'
                   }`}
                   title="Rata Kiri"
                 >
@@ -279,30 +274,31 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
 
             {/* Text Color */}
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-slate-700 block">Warna Teks Arab</label>
+              <label className="text-xs font-bold text-slate-700 block">Warna Teks Arab</label>
               <div className="flex items-center gap-2">
                 <input
                   type="color"
                   value={styles.arabic.color}
                   onChange={(e) => onUpdateArabicStyle({ color: e.target.value })}
-                  className="w-9 h-9 p-0.5 rounded-lg border border-slate-200 cursor-pointer"
+                  className="w-9 h-9 p-0.5 rounded-xl neu-flat cursor-pointer"
                 />
                 <input
                   type="text"
                   value={styles.arabic.color}
                   onChange={(e) => onUpdateArabicStyle({ color: e.target.value })}
-                  className="flex-1 px-3 py-1.5 text-xs font-mono uppercase bg-slate-50 border border-slate-200 rounded-lg text-slate-800"
+                  className="neu-input flex-1 px-3 py-1.5 text-xs font-mono uppercase rounded-xl text-slate-800 font-semibold"
                 />
               </div>
-              <div className="flex items-center gap-1.5 pt-1">
+              <div className="flex items-center gap-2 pt-1">
                 {COLOR_SWATCHES.map((swatch) => (
                   <button
                     key={swatch.value}
                     onClick={() => onUpdateArabicStyle({ color: swatch.value })}
                     style={{ backgroundColor: swatch.value }}
-                    className={`w-6 h-6 rounded-full border border-slate-300 shadow-xs transition-transform hover:scale-110 ${
+                    /* Micro-interaction: scale 1.15 on hover with smooth cubic-bezier */
+                    className={`w-6 h-6 rounded-full border border-slate-300 shadow-sm transition-transform duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-115 ${
                       styles.arabic.color.toUpperCase() === swatch.value.toUpperCase()
-                        ? 'ring-2 ring-[#B89555] ring-offset-1'
+                        ? 'ring-2 ring-[#B89555] ring-offset-2'
                         : ''
                     }`}
                     title={swatch.name}
@@ -315,18 +311,18 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
 
         {/* ===================== TRANSLITERATION PROPERTIES ===================== */}
         {selectedLayerId === 'transliteration' && (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+          <div className="neu-flat p-4 rounded-2xl space-y-4 animate-sheet-up">
+            <div className="flex items-center justify-between pb-2 border-b border-slate-200/80">
               <span className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
                 <Type className="w-4 h-4 text-[#B89555]" />
                 <span>Layer Transliterasi Latin</span>
               </span>
               <button
                 onClick={() => onUpdateTransliterationStyle({ show: !styles.transliteration.show })}
-                className={`p-1.5 rounded-lg text-xs font-medium flex items-center gap-1 transition-colors ${
+                className={`px-2.5 py-1 rounded-xl text-xs font-bold flex items-center gap-1 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                   styles.transliteration.show
-                    ? 'bg-amber-50 text-[#B89555]'
-                    : 'bg-slate-100 text-slate-400'
+                    ? 'neu-flat ring-1 ring-[#B89555] text-[#B89555]'
+                    : 'neu-button text-slate-400'
                 }`}
                 title="Tampilkan / Sembunyikan"
               >
@@ -337,7 +333,7 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
 
             {/* Font Size Slider */}
             <div className="space-y-1.5">
-              <div className="flex justify-between text-xs font-medium text-slate-700">
+              <div className="flex justify-between text-xs font-semibold text-slate-700">
                 <span>Ukuran Huruf Latin</span>
                 <span className="font-mono text-[#B89555] font-bold">{styles.transliteration.fontSize} px</span>
               </div>
@@ -347,13 +343,13 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                 max={36}
                 value={styles.transliteration.fontSize}
                 onChange={(e) => onUpdateTransliterationStyle({ fontSize: parseInt(e.target.value) })}
-                className="w-full accent-[#B89555] cursor-pointer"
+                className="neu-range w-full cursor-pointer"
               />
             </div>
 
             {/* Bottom Spacing Slider to Translation */}
             <div className="space-y-1.5">
-              <div className="flex justify-between text-xs font-medium text-slate-700">
+              <div className="flex justify-between text-xs font-semibold text-slate-700">
                 <span>Jarak ke Terjemahan (Bawah)</span>
                 <span className="font-mono text-[#B89555] font-bold">{styles.transliteration.bottomSpacing ?? 18} px</span>
               </div>
@@ -364,30 +360,30 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                 step={2}
                 value={styles.transliteration.bottomSpacing ?? 18}
                 onChange={(e) => onUpdateTransliterationStyle({ bottomSpacing: parseInt(e.target.value) })}
-                className="w-full accent-[#B89555] cursor-pointer"
+                className="neu-range w-full cursor-pointer"
               />
             </div>
 
             {/* Font Style: Italic vs Normal */}
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-700 block">Gaya Huruf</label>
+              <label className="text-xs font-bold text-slate-700 block">Gaya Huruf</label>
               <div className="grid grid-cols-2 gap-2 text-xs">
                 <button
                   onClick={() => onUpdateTransliterationStyle({ fontStyle: 'italic' })}
-                  className={`py-1.5 rounded-lg border italic transition-colors ${
+                  className={`py-1.5 rounded-xl italic transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                     styles.transliteration.fontStyle === 'italic'
-                      ? 'border-[#B89555] bg-amber-50 text-slate-900 font-semibold'
-                      : 'border-slate-200 text-slate-600 hover:bg-slate-50'
+                      ? 'neu-flat ring-2 ring-[#B89555] text-slate-900 font-bold'
+                      : 'neu-button text-slate-600'
                   }`}
                 >
                   Italic (Miring)
                 </button>
                 <button
                   onClick={() => onUpdateTransliterationStyle({ fontStyle: 'normal' })}
-                  className={`py-1.5 rounded-lg border transition-colors ${
+                  className={`py-1.5 rounded-xl transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                     styles.transliteration.fontStyle === 'normal'
-                      ? 'border-[#B89555] bg-amber-50 text-slate-900 font-semibold'
-                      : 'border-slate-200 text-slate-600 hover:bg-slate-50'
+                      ? 'neu-flat ring-2 ring-[#B89555] text-slate-900 font-bold'
+                      : 'neu-button text-slate-600'
                   }`}
                 >
                   Normal (Tegak)
@@ -397,30 +393,30 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
 
             {/* Color */}
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-slate-700 block">Warna Huruf Latin</label>
+              <label className="text-xs font-bold text-slate-700 block">Warna Huruf Latin</label>
               <div className="flex items-center gap-2">
                 <input
                   type="color"
                   value={styles.transliteration.color}
                   onChange={(e) => onUpdateTransliterationStyle({ color: e.target.value })}
-                  className="w-9 h-9 p-0.5 rounded-lg border border-slate-200 cursor-pointer"
+                  className="w-9 h-9 p-0.5 rounded-xl neu-flat cursor-pointer"
                 />
                 <input
                   type="text"
                   value={styles.transliteration.color}
                   onChange={(e) => onUpdateTransliterationStyle({ color: e.target.value })}
-                  className="flex-1 px-3 py-1.5 text-xs font-mono uppercase bg-slate-50 border border-slate-200 rounded-lg text-slate-800"
+                  className="neu-input flex-1 px-3 py-1.5 text-xs font-mono uppercase rounded-xl text-slate-800 font-semibold"
                 />
               </div>
-              <div className="flex items-center gap-1.5 pt-1">
+              <div className="flex items-center gap-2 pt-1">
                 {COLOR_SWATCHES.map((swatch) => (
                   <button
                     key={swatch.value}
                     onClick={() => onUpdateTransliterationStyle({ color: swatch.value })}
                     style={{ backgroundColor: swatch.value }}
-                    className={`w-6 h-6 rounded-full border border-slate-300 shadow-xs transition-transform hover:scale-110 ${
+                    className={`w-6 h-6 rounded-full border border-slate-300 shadow-sm transition-transform duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-115 ${
                       styles.transliteration.color.toUpperCase() === swatch.value.toUpperCase()
-                        ? 'ring-2 ring-[#B89555] ring-offset-1'
+                        ? 'ring-2 ring-[#B89555] ring-offset-2'
                         : ''
                     }`}
                   />
@@ -432,18 +428,18 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
 
         {/* ===================== TRANSLATION PROPERTIES ===================== */}
         {selectedLayerId === 'translation' && (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+          <div className="neu-flat p-4 rounded-2xl space-y-4 animate-sheet-up">
+            <div className="flex items-center justify-between pb-2 border-b border-slate-200/80">
               <span className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
                 <Type className="w-4 h-4 text-[#B89555]" />
                 <span>Layer Terjemahan (Indonesia)</span>
               </span>
               <button
                 onClick={() => onUpdateTranslationStyle({ show: !styles.translation.show })}
-                className={`p-1.5 rounded-lg text-xs font-medium flex items-center gap-1 transition-colors ${
+                className={`px-2.5 py-1 rounded-xl text-xs font-bold flex items-center gap-1 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                   styles.translation.show
-                    ? 'bg-amber-50 text-[#B89555]'
-                    : 'bg-slate-100 text-slate-400'
+                    ? 'neu-flat ring-1 ring-[#B89555] text-[#B89555]'
+                    : 'neu-button text-slate-400'
                 }`}
                 title="Tampilkan / Sembunyikan"
               >
@@ -454,7 +450,7 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
 
             {/* Font Size Slider */}
             <div className="space-y-1.5">
-              <div className="flex justify-between text-xs font-medium text-slate-700">
+              <div className="flex justify-between text-xs font-semibold text-slate-700">
                 <span>Ukuran Terjemahan</span>
                 <span className="font-mono text-[#B89555] font-bold">{styles.translation.fontSize} px</span>
               </div>
@@ -464,15 +460,15 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                 max={36}
                 value={styles.translation.fontSize}
                 onChange={(e) => onUpdateTranslationStyle({ fontSize: parseInt(e.target.value) })}
-                className="w-full accent-[#B89555] cursor-pointer"
+                className="neu-range w-full cursor-pointer"
               />
             </div>
 
             {/* Line Height Slider */}
             <div className="space-y-1.5">
-              <div className="flex justify-between text-xs font-medium text-slate-700">
+              <div className="flex justify-between text-xs font-semibold text-slate-700">
                 <span>Jarak Baris</span>
-                <span className="font-mono text-slate-600">{styles.translation.lineHeight.toFixed(1)}</span>
+                <span className="font-mono text-slate-600 font-bold">{styles.translation.lineHeight.toFixed(1)}</span>
               </div>
               <input
                 type="range"
@@ -481,36 +477,36 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                 step={0.1}
                 value={styles.translation.lineHeight}
                 onChange={(e) => onUpdateTranslationStyle({ lineHeight: parseFloat(e.target.value) })}
-                className="w-full accent-[#B89555] cursor-pointer"
+                className="neu-range w-full cursor-pointer"
               />
             </div>
 
             {/* Color */}
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-slate-700 block">Warna Terjemahan</label>
+              <label className="text-xs font-bold text-slate-700 block">Warna Terjemahan</label>
               <div className="flex items-center gap-2">
                 <input
                   type="color"
                   value={styles.translation.color}
                   onChange={(e) => onUpdateTranslationStyle({ color: e.target.value })}
-                  className="w-9 h-9 p-0.5 rounded-lg border border-slate-200 cursor-pointer"
+                  className="w-9 h-9 p-0.5 rounded-xl neu-flat cursor-pointer"
                 />
                 <input
                   type="text"
                   value={styles.translation.color}
                   onChange={(e) => onUpdateTranslationStyle({ color: e.target.value })}
-                  className="flex-1 px-3 py-1.5 text-xs font-mono uppercase bg-slate-50 border border-slate-200 rounded-lg text-slate-800"
+                  className="neu-input flex-1 px-3 py-1.5 text-xs font-mono uppercase rounded-xl text-slate-800 font-semibold"
                 />
               </div>
-              <div className="flex items-center gap-1.5 pt-1">
+              <div className="flex items-center gap-2 pt-1">
                 {COLOR_SWATCHES.map((swatch) => (
                   <button
                     key={swatch.value}
                     onClick={() => onUpdateTranslationStyle({ color: swatch.value })}
                     style={{ backgroundColor: swatch.value }}
-                    className={`w-6 h-6 rounded-full border border-slate-300 shadow-xs transition-transform hover:scale-110 ${
+                    className={`w-6 h-6 rounded-full border border-slate-300 shadow-sm transition-transform duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-115 ${
                       styles.translation.color.toUpperCase() === swatch.value.toUpperCase()
-                        ? 'ring-2 ring-[#B89555] ring-offset-1'
+                        ? 'ring-2 ring-[#B89555] ring-offset-2'
                         : ''
                     }`}
                   />
@@ -522,8 +518,8 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
 
         {/* ===================== META & BASMALAH PROPERTIES ===================== */}
         {selectedLayerId === 'meta' && (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+          <div className="neu-flat p-4 rounded-2xl space-y-4 animate-sheet-up">
+            <div className="flex items-center justify-between pb-2 border-b border-slate-200/80">
               <span className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
                 <Sparkles className="w-4 h-4 text-[#B89555]" />
                 <span>Nama Surah & Basmalah (Bismillah)</span>
@@ -532,26 +528,26 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
 
             {/* Surah Status Banner */}
             {project.selectedSurah.number === 9 ? (
-              <div className="p-3 bg-amber-50/80 border border-amber-200/80 rounded-xl text-xs space-y-1">
+              <div className="neu-inset-sm p-3.5 rounded-xl text-xs space-y-1">
                 <span className="font-bold text-slate-900 block">Surah At-Taubah (Surat ke-9)</span>
-                <p className="text-[11px] text-slate-600 leading-relaxed">
+                <p className="text-[11px] text-slate-600 font-medium leading-relaxed">
                   Berdasarkan kaidah qira'at dan ijma' ulama mushaf, Surah At-Taubah <strong>tidak diawali dengan Basmalah</strong>. Opsi Basmalah dinonaktifkan secara otomatis.
                 </p>
               </div>
             ) : project.selectedSurah.number === 1 ? (
-              <div className="p-3 bg-blue-50/70 border border-blue-200/80 rounded-xl text-xs space-y-1">
+              <div className="neu-inset-sm p-3.5 rounded-xl text-xs space-y-1">
                 <span className="font-bold text-slate-900 block">Surah Al-Fatihah (Surat ke-1)</span>
-                <p className="text-[11px] text-slate-600 leading-relaxed">
+                <p className="text-[11px] text-slate-600 font-medium leading-relaxed">
                   Dalam Surah Al-Fatihah, kalimat <em>Bismillāhir-raḥmānir-raḥīm</em> sudah merupakan <strong>Ayat 1 mandiri</strong> yang memiliki terjemahan dan transliterasi lengkap. Basmalah header ditiadakan agar tidak terjadi pengulangan ganda pada slide.
                 </p>
               </div>
             ) : (
               /* Settings for all other surahs */
-              <div className="space-y-3 p-3 bg-slate-50 rounded-xl border border-slate-200/80">
+              <div className="space-y-3 p-3.5 rounded-xl neu-flat-sm">
                 <div className="flex items-center justify-between">
                   <div>
                     <span className="text-xs font-bold text-slate-800 block">Basmalah di Awal Surah</span>
-                    <span className="text-[11px] text-slate-500">
+                    <span className="text-[11px] text-slate-500 font-medium">
                       Sebagai opsi pembuka sebelum ayat 1
                     </span>
                   </div>
@@ -564,12 +560,12 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                 </div>
 
                 {styles.meta.showBismillah && (
-                  <div className="space-y-2 pt-2 border-t border-slate-200/60">
-                    <label className="text-[11px] font-semibold text-slate-700 block">
+                  <div className="space-y-2 pt-2 border-t border-slate-300/60">
+                    <label className="text-[11px] font-bold text-slate-700 block">
                       Aturan Penempatan Basmalah:
                     </label>
-                    <div className="space-y-1.5">
-                      <label className="flex items-start gap-2 p-2 bg-white rounded-lg border border-slate-200 cursor-pointer text-xs">
+                    <div className="space-y-2">
+                      <label className="flex items-start gap-2 p-2.5 rounded-xl neu-button cursor-pointer text-xs">
                         <input
                           type="radio"
                           name="bismillahPlacement"
@@ -580,13 +576,13 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                         />
                         <div>
                           <span className="font-bold text-slate-800 block">Hanya di Awal Surah (Rekomendasi)</span>
-                          <span className="text-[10px] text-slate-500 block">
+                          <span className="text-[10px] text-slate-500 block font-medium">
                             Hanya muncul pada slide pembuka (Ayat 1). Tidak berulang di setiap ayat pertengahan.
                           </span>
                         </div>
                       </label>
 
-                      <label className="flex items-start gap-2 p-2 bg-white rounded-lg border border-slate-200 cursor-pointer text-xs">
+                      <label className="flex items-start gap-2 p-2.5 rounded-xl neu-button cursor-pointer text-xs">
                         <input
                           type="radio"
                           name="bismillahPlacement"
@@ -597,7 +593,7 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                         />
                         <div>
                           <span className="font-bold text-slate-800 block">Di Setiap Slide (Opsional)</span>
-                          <span className="text-[10px] text-slate-500 block">
+                          <span className="text-[10px] text-slate-500 block font-medium">
                             Tampilkan Basmalah di seluruh halaman video recitation.
                           </span>
                         </div>
@@ -609,10 +605,10 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
             )}
 
             {/* Surah Name Toggle */}
-            <div className="p-3 bg-slate-50 rounded-xl border border-slate-200/80 flex items-center justify-between">
+            <div className="p-3.5 rounded-xl neu-flat-sm flex items-center justify-between">
               <div>
                 <span className="text-xs font-bold text-slate-800 block">Tampilkan Nama Surah & Ayat</span>
-                <span className="text-[11px] text-slate-500">
+                <span className="text-[11px] text-slate-500 font-medium">
                   Label info di bagian atas kanvas (contoh: QS. Al-Mulk · Ayat 1)
                 </span>
               </div>
@@ -626,7 +622,7 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
 
             {/* Header Font Size Slider */}
             <div className="space-y-1.5">
-              <div className="flex justify-between text-xs font-medium text-slate-700">
+              <div className="flex justify-between text-xs font-semibold text-slate-700">
                 <span>Ukuran Teks Header</span>
                 <span className="font-mono text-[#B89555] font-bold">{styles.meta.fontSize} px</span>
               </div>
@@ -636,25 +632,25 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                 max={28}
                 value={styles.meta.fontSize}
                 onChange={(e) => onUpdateMetaStyle({ fontSize: parseInt(e.target.value) })}
-                className="w-full accent-[#B89555] cursor-pointer"
+                className="neu-range w-full cursor-pointer"
               />
             </div>
 
             {/* Header Text Color */}
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-slate-700 block">Warna Teks Header</label>
+              <label className="text-xs font-bold text-slate-700 block">Warna Teks Header</label>
               <div className="flex items-center gap-2">
                 <input
                   type="color"
                   value={styles.meta.color}
                   onChange={(e) => onUpdateMetaStyle({ color: e.target.value })}
-                  className="w-9 h-9 p-0.5 rounded-lg border border-slate-200 cursor-pointer"
+                  className="w-9 h-9 p-0.5 rounded-xl neu-flat cursor-pointer"
                 />
                 <input
                   type="text"
                   value={styles.meta.color}
                   onChange={(e) => onUpdateMetaStyle({ color: e.target.value })}
-                  className="flex-1 px-3 py-1.5 text-xs font-mono uppercase bg-slate-50 border border-slate-200 rounded-lg text-slate-800"
+                  className="neu-input flex-1 px-3 py-1.5 text-xs font-mono uppercase rounded-xl text-slate-800 font-semibold"
                 />
               </div>
             </div>
@@ -663,8 +659,8 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
 
         {/* ===================== CANVAS & PAGINATION PROPERTIES ===================== */}
         {(selectedLayerId === 'canvas' || selectedLayerId === null) && (
-          <div className="space-y-5">
-            <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+          <div className="neu-flat p-4 rounded-2xl space-y-4 animate-sheet-up">
+            <div className="flex items-center justify-between pb-2 border-b border-slate-200/80">
               <span className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
                 <Sliders className="w-4 h-4 text-[#B89555]" />
                 <span>Pengaturan Kanvas & Video</span>
@@ -673,10 +669,10 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
 
             {/* Aspect Ratio Presets ("macam2") */}
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-700 block">
+              <label className="text-xs font-bold text-slate-700 block">
                 Format Rasio Video ("macam2")
               </label>
-              <div className="grid grid-cols-2 gap-2 text-xs">
+              <div className="grid grid-cols-2 gap-2.5 text-xs">
                 {CANVAS_PRESETS.map((p) => {
                   const isSelected = canvas.preset === p.preset;
                   return (
@@ -689,14 +685,14 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                           preset: p.preset,
                         })
                       }
-                      className={`p-2.5 rounded-xl border text-left transition-all ${
+                      className={`p-3 rounded-xl text-left transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                         isSelected
-                          ? 'border-[#B89555] bg-amber-50/60 font-semibold text-slate-900 ring-1 ring-[#B89555]/30'
-                          : 'border-slate-200 hover:bg-slate-50 text-slate-700'
+                          ? 'neu-flat ring-2 ring-[#B89555] font-bold text-slate-900'
+                          : 'neu-button text-slate-700'
                       }`}
                     >
                       <div className="font-bold text-xs">{p.preset.toUpperCase()}</div>
-                      <div className="text-[10px] text-slate-500 font-mono">
+                      <div className="text-[10px] text-slate-500 font-mono font-medium">
                         {p.width} × {p.height}
                       </div>
                     </button>
@@ -708,7 +704,7 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
             {/* Custom Dimensions */}
             <div className="grid grid-cols-2 gap-2 text-xs">
               <div>
-                <label className="text-[11px] text-slate-500 block mb-1">Lebar (px):</label>
+                <label className="text-[11px] font-semibold text-slate-500 block mb-1">Lebar (px):</label>
                 <input
                   type="number"
                   value={canvas.width}
@@ -718,11 +714,11 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                       preset: 'custom',
                     })
                   }
-                  className="w-full px-2.5 py-1.5 font-mono text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-800"
+                  className="neu-input w-full px-2.5 py-1.5 font-mono text-xs rounded-xl text-slate-800 font-bold"
                 />
               </div>
               <div>
-                <label className="text-[11px] text-slate-500 block mb-1">Tinggi (px):</label>
+                <label className="text-[11px] font-semibold text-slate-500 block mb-1">Tinggi (px):</label>
                 <input
                   type="number"
                   value={canvas.height}
@@ -732,14 +728,14 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                       preset: 'custom',
                     })
                   }
-                  className="w-full px-2.5 py-1.5 font-mono text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-800"
+                  className="neu-input w-full px-2.5 py-1.5 font-mono text-xs rounded-xl text-slate-800 font-bold"
                 />
               </div>
             </div>
 
             {/* Canvas Padding */}
             <div className="space-y-1.5">
-              <div className="flex justify-between text-xs font-medium text-slate-700">
+              <div className="flex justify-between text-xs font-semibold text-slate-700">
                 <span>Batas Tepi (Padding)</span>
                 <span className="font-mono text-[#B89555] font-bold">{canvas.padding} px</span>
               </div>
@@ -749,13 +745,13 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                 max={140}
                 value={canvas.padding}
                 onChange={(e) => onUpdateCanvasConfig({ padding: parseInt(e.target.value) })}
-                className="w-full accent-[#B89555] cursor-pointer"
+                className="neu-range w-full cursor-pointer"
               />
             </div>
 
             {/* Safe Area Percent */}
             <div className="space-y-1.5">
-              <div className="flex justify-between text-xs font-medium text-slate-700">
+              <div className="flex justify-between text-xs font-semibold text-slate-700">
                 <span>Safe Margin Guideline</span>
                 <span className="font-mono text-[#B89555] font-bold">{canvas.safeMarginPercent}%</span>
               </div>
@@ -765,40 +761,40 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                 max={15}
                 value={canvas.safeMarginPercent}
                 onChange={(e) => onUpdateCanvasConfig({ safeMarginPercent: parseInt(e.target.value) })}
-                className="w-full accent-[#B89555] cursor-pointer"
+                className="neu-range w-full cursor-pointer"
               />
             </div>
 
             {/* Vertical Alignment */}
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-700 block">Posisi Vertikal Teks</label>
+              <label className="text-xs font-bold text-slate-700 block">Posisi Vertikal Teks</label>
               <div className="grid grid-cols-3 gap-2 text-xs">
                 <button
                   onClick={() => onUpdateCanvasConfig({ verticalAlign: 'top' })}
-                  className={`py-1.5 rounded-lg border ${
+                  className={`py-2 rounded-xl transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                     canvas.verticalAlign === 'top'
-                      ? 'border-[#B89555] bg-amber-50 text-[#B89555] font-semibold'
-                      : 'border-slate-200 text-slate-600 hover:bg-slate-50'
+                      ? 'neu-flat ring-2 ring-[#B89555] text-[#B89555] font-bold'
+                      : 'neu-button text-slate-600'
                   }`}
                 >
                   Atas
                 </button>
                 <button
                   onClick={() => onUpdateCanvasConfig({ verticalAlign: 'center' })}
-                  className={`py-1.5 rounded-lg border ${
+                  className={`py-2 rounded-xl transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                     canvas.verticalAlign === 'center'
-                      ? 'border-[#B89555] bg-amber-50 text-[#B89555] font-semibold'
-                      : 'border-slate-200 text-slate-600 hover:bg-slate-50'
+                      ? 'neu-flat ring-2 ring-[#B89555] text-[#B89555] font-bold'
+                      : 'neu-button text-slate-600'
                   }`}
                 >
                   Tengah
                 </button>
                 <button
                   onClick={() => onUpdateCanvasConfig({ verticalAlign: 'bottom' })}
-                  className={`py-1.5 rounded-lg border ${
+                  className={`py-2 rounded-xl transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                     canvas.verticalAlign === 'bottom'
-                      ? 'border-[#B89555] bg-amber-50 text-[#B89555] font-semibold'
-                      : 'border-slate-200 text-slate-600 hover:bg-slate-50'
+                      ? 'neu-flat ring-2 ring-[#B89555] text-[#B89555] font-bold'
+                      : 'neu-button text-slate-600'
                   }`}
                 >
                   Bawah
@@ -807,7 +803,7 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
             </div>
 
             {/* ===================== PAGINATION ENGINE SETTINGS ===================== */}
-            <div className="pt-3 border-t border-slate-100 space-y-3">
+            <div className="pt-3 border-t border-slate-300/60 space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
                   <Layers className="w-4 h-4 text-[#B89555]" />
@@ -817,64 +813,64 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
 
               {/* Pagination Mode Selector */}
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-700 block">
+                <label className="text-xs font-bold text-slate-700 block">
                   Distribusi Ayat ke Halaman
                 </label>
-                <div className="grid grid-cols-2 gap-2 text-xs">
+                <div className="grid grid-cols-2 gap-2.5 text-xs">
                   <button
                     onClick={() => onUpdatePaginationConfig({ mode: 'single_verse' })}
-                    className={`p-2 rounded-xl border text-left transition-all ${
+                    className={`p-2.5 rounded-xl text-left transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                       pagination.mode === 'single_verse'
-                        ? 'border-[#B89555] bg-amber-50/70 font-semibold text-slate-900'
-                        : 'border-slate-200 hover:bg-slate-50 text-slate-600'
+                        ? 'neu-flat ring-2 ring-[#B89555] font-bold text-slate-900'
+                        : 'neu-button text-slate-600'
                     }`}
                   >
                     <div className="font-bold">1 Ayat / Slide</div>
-                    <div className="text-[10px] text-slate-400">Tiap ayat 1 gambar PNG</div>
+                    <div className="text-[10px] text-slate-500 font-medium">Tiap ayat 1 gambar PNG</div>
                   </button>
 
                   <button
                     onClick={() => onUpdatePaginationConfig({ mode: 'fixed_count' })}
-                    className={`p-2 rounded-xl border text-left transition-all ${
+                    className={`p-2.5 rounded-xl text-left transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                       pagination.mode === 'fixed_count'
-                        ? 'border-[#B89555] bg-amber-50/70 font-semibold text-slate-900'
-                        : 'border-slate-200 hover:bg-slate-50 text-slate-600'
+                        ? 'neu-flat ring-2 ring-[#B89555] font-bold text-slate-900'
+                        : 'neu-button text-slate-600'
                     }`}
                   >
                     <div className="font-bold">Jumlah Tetap</div>
-                    <div className="text-[10px] text-slate-400">{pagination.fixedCount} ayat per slide</div>
+                    <div className="text-[10px] text-slate-500 font-medium">{pagination.fixedCount} ayat per slide</div>
                   </button>
 
                   <button
                     onClick={() => onUpdatePaginationConfig({ mode: 'auto_fit' })}
-                    className={`p-2 rounded-xl border text-left transition-all ${
+                    className={`p-2.5 rounded-xl text-left transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                       pagination.mode === 'auto_fit'
-                        ? 'border-[#B89555] bg-amber-50/70 font-semibold text-slate-900'
-                        : 'border-slate-200 hover:bg-slate-50 text-slate-600'
+                        ? 'neu-flat ring-2 ring-[#B89555] font-bold text-slate-900'
+                        : 'neu-button text-slate-600'
                     }`}
                   >
                     <div className="font-bold">Auto Fit</div>
-                    <div className="text-[10px] text-slate-400">Pecah otomatis jika penuh</div>
+                    <div className="text-[10px] text-slate-500 font-medium">Pecah otomatis jika penuh</div>
                   </button>
 
                   <button
                     onClick={() => onUpdatePaginationConfig({ mode: 'manual' })}
-                    className={`p-2 rounded-xl border text-left transition-all ${
+                    className={`p-2.5 rounded-xl text-left transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                       pagination.mode === 'manual'
-                        ? 'border-[#B89555] bg-amber-50/70 font-semibold text-slate-900'
-                        : 'border-slate-200 hover:bg-slate-50 text-slate-600'
+                        ? 'neu-flat ring-2 ring-[#B89555] font-bold text-slate-900'
+                        : 'neu-button text-slate-600'
                     }`}
                   >
                     <div className="font-bold">Manual</div>
-                    <div className="text-[10px] text-slate-400">Atur ayat per slide manual</div>
+                    <div className="text-[10px] text-slate-500 font-medium">Atur ayat per slide manual</div>
                   </button>
                 </div>
               </div>
 
               {/* If Fixed Count is selected */}
               {pagination.mode === 'fixed_count' && (
-                <div className="space-y-1.5 p-3 bg-slate-50 rounded-xl border border-slate-200/80">
-                  <div className="flex justify-between text-xs font-semibold text-slate-700">
+                <div className="space-y-1.5 p-3 rounded-xl neu-inset-sm">
+                  <div className="flex justify-between text-xs font-bold text-slate-700">
                     <span>Ayat Per Halaman</span>
                     <span className="font-mono text-[#B89555] font-bold">{pagination.fixedCount} Ayat</span>
                   </div>
@@ -884,14 +880,14 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                     max={6}
                     value={pagination.fixedCount}
                     onChange={(e) => onUpdatePaginationConfig({ fixedCount: parseInt(e.target.value) || 2 })}
-                    className="w-full accent-[#B89555] cursor-pointer"
+                    className="neu-range w-full cursor-pointer"
                   />
                 </div>
               )}
 
               {/* Verse Spacing */}
               <div className="space-y-1.5">
-                <div className="flex justify-between text-xs font-medium text-slate-700">
+                <div className="flex justify-between text-xs font-semibold text-slate-700">
                   <span>Jarak Antar Ayat</span>
                   <span className="font-mono text-[#B89555] font-bold">{pagination.verseSpacing} px</span>
                 </div>
@@ -901,7 +897,7 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                   max={80}
                   value={pagination.verseSpacing}
                   onChange={(e) => onUpdatePaginationConfig({ verseSpacing: parseInt(e.target.value) })}
-                  className="w-full accent-[#B89555] cursor-pointer"
+                  className="neu-range w-full cursor-pointer"
                 />
               </div>
             </div>
