@@ -55,6 +55,8 @@ interface LeftSidebarProps {
   onUploadCustomFont: (name: string, fontUrl: string) => void;
   arabicStyle: ArabicStyle;
   onUpdateArabicStyle: (style: Partial<ArabicStyle>) => void;
+  isMobileDrawer?: boolean;
+  initialTab?: 'quran' | 'pages' | 'templates' | 'assets';
 }
 
 export const LeftSidebar: React.FC<LeftSidebarProps> = ({
@@ -82,8 +84,17 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
   onUploadCustomFont,
   arabicStyle,
   onUpdateArabicStyle,
+  isMobileDrawer = false,
+  initialTab,
 }) => {
-  const [activeTab, setActiveTab] = useState<'quran' | 'pages' | 'templates' | 'assets'>('quran');
+  const [activeTab, setActiveTab] = useState<'quran' | 'pages' | 'templates' | 'assets'>(initialTab || 'quran');
+
+  React.useEffect(() => {
+    if (initialTab) {
+      setActiveTab(initialTab);
+    }
+  }, [initialTab]);
+
   const [surahSearch, setSurahSearch] = useState('');
   const [rangeStart, setRangeStart] = useState<number>(1);
   const [rangeEnd, setRangeEnd] = useState<number>(Math.min(5, selectedSurah.totalVerses));
@@ -153,7 +164,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({
   };
 
   return (
-    <aside className="w-80 md:w-88 bg-white border-r border-slate-200 flex flex-col h-full shrink-0 select-none z-20 shadow-xs">
+    <aside className={`bg-white flex flex-col h-full select-none ${isMobileDrawer ? 'w-full border-none' : 'w-80 md:w-88 border-r border-slate-200 shrink-0 z-20 shadow-xs'}`}>
       {/* Navigation Tabs Header */}
       <div className="flex border-b border-slate-200 bg-slate-50/80 p-1 gap-1">
         <button

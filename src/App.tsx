@@ -24,6 +24,19 @@ import { LAYOUT_PRESETS } from './data/layoutPresets';
 import { CANVAS_PRESETS } from './data/canvasPresets';
 import { calculatePagination } from './utils/pagination';
 
+import { 
+  BookOpen, 
+  Layers, 
+  Type, 
+  LayoutTemplate, 
+  Sliders, 
+  X, 
+  ChevronLeft, 
+  ChevronRight, 
+  Plus, 
+  Maximize2 
+} from 'lucide-react';
+
 import { TopToolbar } from './components/TopToolbar';
 import { LeftSidebar } from './components/LeftSidebar';
 import { CenterCanvas } from './components/CenterCanvas';
@@ -60,21 +73,32 @@ export default function App() {
   const [videoPreviewModalOpen, setVideoPreviewModalOpen] = useState<boolean>(false);
   const [attributionModalOpen, setAttributionModalOpen] = useState<boolean>(false);
 
+  // Mobile Bottom Drawer State
+  const [mobileActiveDrawer, setMobileActiveDrawer] = useState<'quran' | 'pages' | 'templates' | 'assets' | 'properties' | 'canvas_settings' | null>(null);
+
   // Canvas DOM ref for PNG export
   const canvasRef = useRef<HTMLDivElement>(null);
 
   // Auto-fit initial zoom calculation based on window size
   const calculateInitialFitZoom = useCallback(() => {
-    const availableWidth = window.innerWidth - 320 - 320 - 64; // Sub sidebar widths and padding
-    const availableHeight = window.innerHeight - 56 - 64; // Sub toolbar height and padding
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 1024;
+    const availableWidth = isMobile
+      ? Math.max(260, window.innerWidth - 32)
+      : Math.max(300, window.innerWidth - 320 - 320 - 64);
+    const availableHeight = isMobile
+      ? Math.max(280, window.innerHeight - 56 - 64 - 56) // minus toolbar, mobile floating bar & bottom nav
+      : Math.max(300, window.innerHeight - 56 - 64);
     const scaleX = availableWidth / project.canvas.width;
     const scaleY = availableHeight / project.canvas.height;
     const bestFit = Math.min(scaleX, scaleY, 0.85);
-    setZoom(Math.max(0.2, Math.min(1.2, Number(bestFit.toFixed(2)))));
+    setZoom(Math.max(0.18, Math.min(1.2, Number(bestFit.toFixed(2)))));
   }, [project.canvas.width, project.canvas.height]);
 
   useEffect(() => {
     calculateInitialFitZoom();
+    const handleResize = () => calculateInitialFitZoom();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, [calculateInitialFitZoom]);
 
   // Load verses for the current selected surah on startup
@@ -521,33 +545,35 @@ export default function App() {
 
       {/* 2. Workspace Body: Left Sidebar + Center Canvas + Right Properties Panel */}
       <div className="flex-1 flex overflow-hidden relative">
-        {/* Left Sidebar */}
-        <LeftSidebar
-          selectedSurah={project.selectedSurah}
-          onSelectSurah={handleSelectSurah}
-          isLoadingSurah={isLoadingSurah}
-          surahError={surahError}
-          onRetryLoadSurah={handleRetryLoadSurah}
-          availableVerses={availableVerses}
-          selectedVerseNumbers={selectedVerseNumbers}
-          onToggleVerseSelection={handleToggleVerseSelection}
-          onSelectAllVerses={handleSelectAllVerses}
-          onSelectVerseRange={handleSelectVerseRange}
-          onApplyVersesToProject={handleApplyVersesToProject}
-          pages={project.pages}
-          activePageIndex={project.activePageIndex}
-          onSelectPage={handleSelectPage}
-          onAddPage={handleAddPage}
-          onDuplicatePage={handleDuplicatePage}
-          onDeletePage={handleDeletePage}
-          onMovePage={handleMovePage}
-          layoutPreset={project.layoutPreset}
-          onSelectLayoutPreset={handleSelectLayoutPreset}
-          customFonts={project.customFonts}
-          onUploadCustomFont={handleUploadCustomFont}
-          arabicStyle={project.styles.arabic}
-          onUpdateArabicStyle={handleUpdateArabicStyle}
-        />
+        {/* Left Sidebar (Desktop Only) */}
+        <div className="hidden lg:flex h-full shrink-0">
+          <LeftSidebar
+            selectedSurah={project.selectedSurah}
+            onSelectSurah={handleSelectSurah}
+            isLoadingSurah={isLoadingSurah}
+            surahError={surahError}
+            onRetryLoadSurah={handleRetryLoadSurah}
+            availableVerses={availableVerses}
+            selectedVerseNumbers={selectedVerseNumbers}
+            onToggleVerseSelection={handleToggleVerseSelection}
+            onSelectAllVerses={handleSelectAllVerses}
+            onSelectVerseRange={handleSelectVerseRange}
+            onApplyVersesToProject={handleApplyVersesToProject}
+            pages={project.pages}
+            activePageIndex={project.activePageIndex}
+            onSelectPage={handleSelectPage}
+            onAddPage={handleAddPage}
+            onDuplicatePage={handleDuplicatePage}
+            onDeletePage={handleDeletePage}
+            onMovePage={handleMovePage}
+            layoutPreset={project.layoutPreset}
+            onSelectLayoutPreset={handleSelectLayoutPreset}
+            customFonts={project.customFonts}
+            onUploadCustomFont={handleUploadCustomFont}
+            arabicStyle={project.styles.arabic}
+            onUpdateArabicStyle={handleUpdateArabicStyle}
+          />
+        </div>
 
         {/* Center Canvas Viewport */}
         <CenterCanvas
@@ -558,26 +584,234 @@ export default function App() {
           zoom={zoom}
           showSafeMargins={showSafeMargins}
           selectedLayerId={project.selectedLayerId}
-          onSelectLayer={(layerId) =>
-            setProject((prev) => ({ ...prev, selectedLayerId: layerId }))
-          }
+          onSelectLayer={(layerId) => {
+            setProject((prev) => ({ ...prev, selectedLayerId: layerId }));
+            if (layerId && typeof window !== 'undefined' && window.innerWidth < 1024) {
+              setMobileActiveDrawer('properties');
+            }
+          }}
         />
 
-        {/* Right Sidebar: Properties Panel */}
-        <PropertiesPanel
-          project={project}
-          selectedLayerId={project.selectedLayerId}
-          onSelectLayer={(layerId) =>
-            setProject((prev) => ({ ...prev, selectedLayerId: layerId }))
-          }
-          onUpdateArabicStyle={handleUpdateArabicStyle}
-          onUpdateTransliterationStyle={handleUpdateTransliterationStyle}
-          onUpdateTranslationStyle={handleUpdateTranslationStyle}
-          onUpdateMetaStyle={handleUpdateMetaStyle}
-          onUpdateCanvasConfig={handleUpdateCanvasConfig}
-          onUpdatePaginationConfig={handleUpdatePaginationConfig}
-        />
+        {/* Right Sidebar: Properties Panel (Desktop Only) */}
+        <div className="hidden lg:flex h-full shrink-0">
+          <PropertiesPanel
+            project={project}
+            selectedLayerId={project.selectedLayerId}
+            onSelectLayer={(layerId) =>
+              setProject((prev) => ({ ...prev, selectedLayerId: layerId }))
+            }
+            onUpdateArabicStyle={handleUpdateArabicStyle}
+            onUpdateTransliterationStyle={handleUpdateTransliterationStyle}
+            onUpdateTranslationStyle={handleUpdateTranslationStyle}
+            onUpdateMetaStyle={handleUpdateMetaStyle}
+            onUpdateCanvasConfig={handleUpdateCanvasConfig}
+            onUpdatePaginationConfig={handleUpdatePaginationConfig}
+          />
+        </div>
       </div>
+
+      {/* --- MOBILE CANVA-STYLE CONTROLS (< 1024px) --- */}
+
+      {/* Floating Quick Page Switcher & Zoom */}
+      <div className="lg:hidden fixed bottom-16 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1.5 px-3 py-1.5 bg-slate-900/90 text-white backdrop-blur-md rounded-full shadow-lg border border-slate-700/50 text-xs">
+        <button
+          onClick={() => handleSelectPage(Math.max(0, project.activePageIndex - 1))}
+          disabled={project.activePageIndex === 0}
+          className="p-1 rounded-full hover:bg-white/10 disabled:opacity-30 disabled:hover:bg-transparent"
+          title="Halaman Sebelumnya"
+        >
+          <ChevronLeft className="w-4 h-4" />
+        </button>
+
+        <button
+          onClick={() => setMobileActiveDrawer('pages')}
+          className="px-2 py-0.5 rounded font-medium hover:bg-white/10 text-slate-100 flex items-center gap-1"
+        >
+          <span>Hal {project.activePageIndex + 1}</span>
+          <span className="text-slate-400">/</span>
+          <span className="text-slate-400">{project.pages.length}</span>
+        </button>
+
+        <button
+          onClick={() => handleSelectPage(Math.min(project.pages.length - 1, project.activePageIndex + 1))}
+          disabled={project.activePageIndex >= project.pages.length - 1}
+          className="p-1 rounded-full hover:bg-white/10 disabled:opacity-30 disabled:hover:bg-transparent"
+          title="Halaman Berikutnya"
+        >
+          <ChevronRight className="w-4 h-4" />
+        </button>
+
+        <div className="w-px h-3.5 bg-slate-700 mx-0.5" />
+
+        <button
+          onClick={handleAddPage}
+          className="p-1 rounded-full hover:bg-white/10 text-[#B89555] font-semibold"
+          title="Tambah Halaman Baru"
+        >
+          <Plus className="w-4 h-4" />
+        </button>
+
+        <button
+          onClick={calculateInitialFitZoom}
+          className="p-1 rounded-full hover:bg-white/10 text-slate-300"
+          title="Reset Zoom Pas Layar"
+        >
+          <Maximize2 className="w-3.5 h-3.5" />
+        </button>
+      </div>
+
+      {/* Mobile Bottom Navigation Bar */}
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-30 bg-white/95 backdrop-blur-md border-t border-slate-200 px-2 py-1 flex items-center justify-around shadow-xl">
+        <button
+          onClick={() => setMobileActiveDrawer(mobileActiveDrawer === 'quran' ? null : 'quran')}
+          className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl text-[10px] font-medium transition-colors ${
+            mobileActiveDrawer === 'quran' ? 'text-[#B89555] font-semibold' : 'text-slate-600 hover:text-slate-900'
+          }`}
+        >
+          <BookOpen className="w-5 h-5 mb-0.5" />
+          <span>Ayat</span>
+        </button>
+
+        <button
+          onClick={() => setMobileActiveDrawer(mobileActiveDrawer === 'pages' ? null : 'pages')}
+          className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl text-[10px] font-medium transition-colors ${
+            mobileActiveDrawer === 'pages' ? 'text-[#B89555] font-semibold' : 'text-slate-600 hover:text-slate-900'
+          }`}
+        >
+          <Layers className="w-5 h-5 mb-0.5" />
+          <span>Halaman</span>
+        </button>
+
+        <button
+          onClick={() => {
+            if (!project.selectedLayerId || project.selectedLayerId === 'canvas') {
+              setProject((prev) => ({ ...prev, selectedLayerId: 'arabic' }));
+            }
+            setMobileActiveDrawer(mobileActiveDrawer === 'properties' ? null : 'properties');
+          }}
+          className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl text-[10px] font-medium transition-colors ${
+            mobileActiveDrawer === 'properties' && project.selectedLayerId !== 'canvas' ? 'text-[#B89555] font-semibold' : 'text-slate-600 hover:text-slate-900'
+          }`}
+        >
+          <Type className="w-5 h-5 mb-0.5" />
+          <span>Gaya Teks</span>
+        </button>
+
+        <button
+          onClick={() => setMobileActiveDrawer(mobileActiveDrawer === 'templates' ? null : 'templates')}
+          className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl text-[10px] font-medium transition-colors ${
+            mobileActiveDrawer === 'templates' ? 'text-[#B89555] font-semibold' : 'text-slate-600 hover:text-slate-900'
+          }`}
+        >
+          <LayoutTemplate className="w-5 h-5 mb-0.5" />
+          <span>Template</span>
+        </button>
+
+        <button
+          onClick={() => {
+            setProject((prev) => ({ ...prev, selectedLayerId: 'canvas' }));
+            setMobileActiveDrawer(mobileActiveDrawer === 'canvas_settings' ? null : 'canvas_settings');
+          }}
+          className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl text-[10px] font-medium transition-colors ${
+            mobileActiveDrawer === 'canvas_settings' ? 'text-[#B89555] font-semibold' : 'text-slate-600 hover:text-slate-900'
+          }`}
+        >
+          <Sliders className="w-5 h-5 mb-0.5" />
+          <span>Format</span>
+        </button>
+      </nav>
+
+      {/* Mobile Drawer Bottom Sheet */}
+      {mobileActiveDrawer && (
+        <div className="lg:hidden fixed inset-0 z-40 flex flex-col justify-end">
+          {/* Backdrop */}
+          <div 
+            className="absolute inset-0 bg-black/40 backdrop-blur-xs transition-opacity"
+            onClick={() => setMobileActiveDrawer(null)}
+          />
+
+          {/* Sheet Container */}
+          <div className="relative w-full max-h-[82vh] bg-white rounded-t-2xl shadow-2xl flex flex-col overflow-hidden border-t border-slate-200">
+            {/* Header / Grab Handle */}
+            <div className="p-3 pb-2 border-b border-slate-100 flex items-center justify-between bg-slate-50/90 relative">
+              <div className="w-10 h-1 bg-slate-300 rounded-full mx-auto absolute left-1/2 -translate-x-1/2 top-2" />
+              <div className="font-semibold text-xs text-slate-800 uppercase tracking-wider pt-2">
+                {mobileActiveDrawer === 'quran' && 'Pilih Surah & Ayat'}
+                {mobileActiveDrawer === 'pages' && 'Kelola Halaman & Urutan'}
+                {mobileActiveDrawer === 'templates' && 'Pilihan Preset Template'}
+                {mobileActiveDrawer === 'assets' && 'Aset & Font Kustom'}
+                {mobileActiveDrawer === 'properties' && 'Gaya & Format Layer'}
+                {mobileActiveDrawer === 'canvas_settings' && 'Pengaturan Kanvas & Margin'}
+              </div>
+              <button
+                onClick={() => setMobileActiveDrawer(null)}
+                className="p-1 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-200/50"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Content Body */}
+            <div className="flex-1 overflow-y-auto">
+              {(mobileActiveDrawer === 'quran' || mobileActiveDrawer === 'pages' || mobileActiveDrawer === 'templates' || mobileActiveDrawer === 'assets') && (
+                <LeftSidebar
+                  selectedSurah={project.selectedSurah}
+                  onSelectSurah={handleSelectSurah}
+                  isLoadingSurah={isLoadingSurah}
+                  surahError={surahError}
+                  onRetryLoadSurah={handleRetryLoadSurah}
+                  availableVerses={availableVerses}
+                  selectedVerseNumbers={selectedVerseNumbers}
+                  onToggleVerseSelection={handleToggleVerseSelection}
+                  onSelectAllVerses={handleSelectAllVerses}
+                  onSelectVerseRange={handleSelectVerseRange}
+                  onApplyVersesToProject={() => {
+                    handleApplyVersesToProject();
+                    setMobileActiveDrawer(null);
+                  }}
+                  pages={project.pages}
+                  activePageIndex={project.activePageIndex}
+                  onSelectPage={(index) => {
+                    handleSelectPage(index);
+                  }}
+                  onAddPage={handleAddPage}
+                  onDuplicatePage={handleDuplicatePage}
+                  onDeletePage={handleDeletePage}
+                  onMovePage={handleMovePage}
+                  layoutPreset={project.layoutPreset}
+                  onSelectLayoutPreset={(p) => {
+                    handleSelectLayoutPreset(p);
+                    setMobileActiveDrawer(null);
+                  }}
+                  customFonts={project.customFonts}
+                  onUploadCustomFont={handleUploadCustomFont}
+                  arabicStyle={project.styles.arabic}
+                  onUpdateArabicStyle={handleUpdateArabicStyle}
+                  isMobileDrawer={true}
+                  initialTab={mobileActiveDrawer}
+                />
+              )}
+
+              {(mobileActiveDrawer === 'properties' || mobileActiveDrawer === 'canvas_settings') && (
+                <PropertiesPanel
+                  project={project}
+                  selectedLayerId={project.selectedLayerId}
+                  onSelectLayer={(layerId) =>
+                    setProject((prev) => ({ ...prev, selectedLayerId: layerId }))
+                  }
+                  onUpdateArabicStyle={handleUpdateArabicStyle}
+                  onUpdateTransliterationStyle={handleUpdateTransliterationStyle}
+                  onUpdateTranslationStyle={handleUpdateTranslationStyle}
+                  onUpdateMetaStyle={handleUpdateMetaStyle}
+                  onUpdateCanvasConfig={handleUpdateCanvasConfig}
+                  onUpdatePaginationConfig={handleUpdatePaginationConfig}
+                  isMobileDrawer={true}
+                />
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 3. Modals */}
       <ExportModal

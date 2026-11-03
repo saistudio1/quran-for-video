@@ -37,6 +37,7 @@ interface PropertiesPanelProps {
   onUpdateMetaStyle: (style: Partial<HeaderStyle>) => void;
   onUpdateCanvasConfig: (config: Partial<CanvasConfig>) => void;
   onUpdatePaginationConfig: (config: Partial<PaginationConfig>) => void;
+  isMobileDrawer?: boolean;
 }
 
 const COLOR_SWATCHES = [
@@ -58,11 +59,12 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
   onUpdateMetaStyle,
   onUpdateCanvasConfig,
   onUpdatePaginationConfig,
+  isMobileDrawer = false,
 }) => {
   const { canvas, styles, pagination } = project;
 
   return (
-    <aside className="w-80 bg-white border-l border-slate-200 flex flex-col h-full shrink-0 select-none z-20 shadow-xs">
+    <aside className={`bg-white flex flex-col h-full select-none ${isMobileDrawer ? 'w-full border-none' : 'w-80 border-l border-slate-200 shrink-0 z-20 shadow-xs'}`}>
       {/* Layer Selection Segmented Bar */}
       <div className="p-3 border-b border-slate-200 bg-slate-50/70">
         <label className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-1.5">

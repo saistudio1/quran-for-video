@@ -67,15 +67,15 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({
   return (
     <header className="h-14 bg-white border-b border-slate-200 px-4 flex items-center justify-between gap-4 select-none shrink-0 z-30 shadow-xs">
       {/* Brand & Project Info */}
-      <div className="flex items-center gap-3 shrink-0">
-        <div className="flex items-center gap-2 pr-3 border-r border-slate-200">
+      <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+        <div className="flex items-center gap-2 pr-2 sm:pr-3 border-r border-slate-200">
           <div className="w-8 h-8 rounded-lg bg-[#0F172A] flex items-center justify-center text-[#B89555] shadow-xs">
             <span className="font-bold text-sm tracking-tighter">QL</span>
           </div>
           <div>
             <div className="flex items-center gap-1.5">
               <span className="font-bold text-sm text-slate-900 tracking-tight">QURAN LAYER</span>
-              <span className="text-[10px] uppercase font-semibold tracking-wider px-1.5 py-0.5 rounded bg-amber-50 text-[#B89555] border border-amber-200/50">
+              <span className="hidden sm:inline-block text-[10px] uppercase font-semibold tracking-wider px-1.5 py-0.5 rounded bg-amber-50 text-[#B89555] border border-amber-200/50">
                 PRO
               </span>
             </div>
@@ -83,17 +83,17 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({
         </div>
 
         {/* Project Name & Save Status */}
-        <div className="flex items-center gap-2">
+        <div className="hidden sm:flex items-center gap-2">
           <input
             type="text"
             value={projectName}
             onChange={(e) => onUpdateProjectName(e.target.value)}
-            className="text-xs font-semibold text-slate-800 hover:bg-slate-100 focus:bg-white focus:ring-1 focus:ring-[#B89555] px-2 py-1 rounded transition-colors border border-transparent hover:border-slate-200 max-w-[200px] truncate"
+            className="text-xs font-semibold text-slate-800 hover:bg-slate-100 focus:bg-white focus:ring-1 focus:ring-[#B89555] px-2 py-1 rounded transition-colors border border-transparent hover:border-slate-200 max-w-[150px] md:max-w-[200px] truncate"
             title="Klik untuk mengubah nama proyek"
           />
           <div className="flex items-center gap-1 text-[11px] text-slate-400" title="Proyek tersimpan otomatis di perangkat Anda">
             <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
-            <span className="hidden sm:inline">Tersimpan</span>
+            <span className="hidden md:inline">Tersimpan</span>
           </div>
 
           <button
@@ -112,6 +112,26 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({
           >
             <Scale className="w-3.5 h-3.5 text-[#B89555]" />
             <span className="hidden xl:inline">Atribusi</span>
+          </button>
+        </div>
+
+        {/* Mobile Undo/Redo placed right in top bar for quick thumb reach */}
+        <div className="flex lg:hidden items-center bg-slate-100 rounded-lg p-0.5 border border-slate-200/60 ml-1">
+          <button
+            onClick={onUndo}
+            disabled={!canUndo}
+            className="p-1.5 text-slate-600 hover:text-slate-900 disabled:opacity-30 rounded"
+            title="Undo"
+          >
+            <Undo2 className="w-3.5 h-3.5" />
+          </button>
+          <button
+            onClick={onRedo}
+            disabled={!canRedo}
+            className="p-1.5 text-slate-600 hover:text-slate-900 disabled:opacity-30 rounded"
+            title="Redo"
+          >
+            <Redo2 className="w-3.5 h-3.5" />
           </button>
         </div>
       </div>
@@ -253,10 +273,23 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({
       </div>
 
       {/* Right Primary Actions: Video Mockup, Export PNG, Batch ZIP */}
-      <div className="flex items-center gap-2 shrink-0">
+      <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+        {/* Mobile Safe Margin Guide Toggle */}
+        <button
+          onClick={onToggleSafeMargins}
+          className={`lg:hidden p-1.5 rounded-lg border text-xs flex items-center transition-colors ${
+            showSafeMargins
+              ? 'bg-amber-50 text-[#B89555] border-amber-300'
+              : 'bg-slate-100 text-slate-600 border-slate-200'
+          }`}
+          title="Safe Margin Guide"
+        >
+          <ShieldCheck className="w-4 h-4" />
+        </button>
+
         <button
           onClick={onOpenVideoPreviewModal}
-          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors border border-slate-200/80"
+          className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors border border-slate-200/80"
           title="Uji tampilan overlay dengan simulasi video recitation aktif"
         >
           <Tv className="w-3.5 h-3.5 text-[#B89555]" />
@@ -265,16 +298,17 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({
 
         <button
           onClick={() => onOpenExportModal('single')}
-          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-800 bg-white hover:bg-slate-50 border border-slate-300 hover:border-slate-400 rounded-lg shadow-xs transition-colors"
+          className="flex items-center gap-1 px-2.5 sm:px-3 py-1.5 text-xs font-semibold text-slate-800 bg-white hover:bg-slate-50 border border-slate-300 hover:border-slate-400 rounded-lg shadow-xs transition-colors"
           title="Ekspor Halaman Aktif sebagai PNG Transparan"
         >
           <Download className="w-3.5 h-3.5 text-[#B89555]" />
-          <span>Ekspor PNG</span>
+          <span className="inline sm:hidden">Ekspor</span>
+          <span className="hidden sm:inline">Ekspor PNG</span>
         </button>
 
         <button
           onClick={() => onOpenExportModal('batch')}
-          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-[#0F172A] hover:bg-slate-800 rounded-lg shadow-xs transition-colors"
+          className="hidden md:flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-[#0F172A] hover:bg-slate-800 rounded-lg shadow-xs transition-colors"
           title="Ekspor Semua Halaman dalam satu file ZIP"
         >
           <FolderArchive className="w-3.5 h-3.5 text-[#B89555]" />
