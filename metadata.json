@@ -1,0 +1,6 @@
+{
+  "name": "QURAN LAYER",
+  "description": "Quran Typography & Video Overlay Generator - Professional transparent PNG overlays for Islamic murattal videos, reels, and recitation content.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

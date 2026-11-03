@@ -1,0 +1,6 @@
+{
+  "summary": "Technical & compliance revision plan for QURAN LAYER. Resolves the PNG transparency export by separating the editor checkerboard from the export canvas, implementing a zero-background SVG foreignObject/canvas rasterization pipeline with alpha verification, curating classical Uthmanic Arabic typography (Amiri Quran, Scheherazade New, Noto Naskh) under SIL OFL, and adding a dedicated Open-Source & Attribution modal.",
+  "updatedAt": "2026-11-03T00:16:20.008320505Z",
+  "requestFeedback": true,
+  "userFacing": true
+}
